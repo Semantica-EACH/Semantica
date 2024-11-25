@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,18 +17,18 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.blue[900],
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.blue,
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           backgroundColor: Colors.black,
           iconTheme: IconThemeData(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       themeMode:
           ThemeMode.system, // Alterna automaticamente com base no sistema
@@ -37,6 +38,8 @@ class MyApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -52,35 +55,26 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Row(
           children: [
             IconButton(
-              icon: Icon(Icons.home),
+              icon: const Icon(Icons.home),
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Navegar para Home')),
+                  const SnackBar(content: Text('Navegar para Home')),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Busca ativada')),
+                  const SnackBar(content: Text('Busca ativada')),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.hub),
-/*              icon: SvgPicture.asset(
-                'assets/icons/graph_3.svg',
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(
-                  Theme.of(context).iconTheme.color!, // Usa a cor do tema atual
-                  BlendMode.srcIn,
-                ),
-              ), */
+              icon: const Icon(Icons.hub),
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Acessar Grafo')),
+                  const SnackBar(content: Text('Acessar Grafo')),
                 );
               },
             ),
@@ -88,31 +82,31 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Voltar')),
+                const SnackBar(content: Text('Voltar')),
               );
             },
           ),
           IconButton(
-            icon: Icon(Icons.arrow_forward),
+            icon: const Icon(Icons.arrow_forward),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Avançar')),
+                const SnackBar(content: Text('Avançar')),
               );
             },
           ),
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Abrir Configurações')),
+                const SnackBar(content: Text('Abrir Configurações')),
               );
             },
           ),
           IconButton(
-            icon: Icon(Icons.menu),
+            icon: const Icon(Icons.menu),
             onPressed: () {
               setState(() {
                 _isSidebarVisible = !_isSidebarVisible;
@@ -123,12 +117,12 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Row(
         children: [
-          Expanded(
+          const Expanded(
             flex: 5,
             child: CentralArea(),
           ),
           if (_isSidebarVisible)
-            Expanded(
+            const Expanded(
               flex: 2,
               child: Sidebar(),
             ),
@@ -140,23 +134,42 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // Widget para a Área Central
 class CentralArea extends StatelessWidget {
+  const CentralArea({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.surface,
-//      scaffoldBackgroundColor,
-      child: Center(
-        child: Text(
-          'Área Central',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return Stack(
+      children: [
+        Container(
+          color: Theme.of(context).colorScheme.surface,
+          child: const Center(
+            child: Text(
+              'Área Central',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+          ),
         ),
-      ),
+        Positioned(
+          bottom: 16.0,
+          right: 16.0,
+          child: FloatingActionButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Botão Flutuante Pressionado')),
+              );
+            },
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ],
     );
   }
 }
 
 // Widget para a Área Lateral
 class Sidebar extends StatelessWidget {
+  const Sidebar({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -164,20 +177,20 @@ class Sidebar extends StatelessWidget {
       child: ListView(
         children: [
           ListTile(
-            title: Text('Componente 1'),
-            leading: Icon(Icons.pages),
+            title: const Text('Componente 1'),
+            leading: const Icon(Icons.pages),
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Abrir Componente 1')),
+                const SnackBar(content: Text('Abrir Componente 1')),
               );
             },
           ),
           ListTile(
-            title: Text('Componente 2'),
-            leading: Icon(Icons.graphic_eq),
+            title: const Text('Componente 2'),
+            leading: const Icon(Icons.graphic_eq),
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Abrir Componente 2')),
+                const SnackBar(content: Text('Abrir Componente 2')),
               );
             },
           ),
