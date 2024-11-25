@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,8 +12,25 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Clean Architecture',
       theme: ThemeData(
+        brightness: Brightness.light,
         primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.blue[900],
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.black,
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
+      themeMode:
+          ThemeMode.system, // Alterna automaticamente com base no sistema
       home: HomeScreen(),
     );
   }
@@ -50,7 +68,16 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             IconButton(
-              icon: Icon(Icons.hub), // Ícone de grafo
+              icon: Icon(Icons.hub),
+/*              icon: SvgPicture.asset(
+                'assets/icons/graph_3.svg',
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).iconTheme.color!, // Usa a cor do tema atual
+                  BlendMode.srcIn,
+                ),
+              ), */
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Acessar Grafo')),
@@ -87,7 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: Icon(Icons.menu),
             onPressed: () {
-              // Alterna a visibilidade da área lateral
               setState(() {
                 _isSidebarVisible = !_isSidebarVisible;
               });
@@ -98,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Row(
         children: [
           Expanded(
-            flex: 6,
+            flex: 5,
             child: CentralArea(),
           ),
           if (_isSidebarVisible)
@@ -117,7 +143,8 @@ class CentralArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[200],
+      color: Theme.of(context).colorScheme.surface,
+//      scaffoldBackgroundColor,
       child: Center(
         child: Text(
           'Área Central',
@@ -133,7 +160,7 @@ class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[300],
+      color: Theme.of(context).colorScheme.secondaryContainer,
       child: ListView(
         children: [
           ListTile(
