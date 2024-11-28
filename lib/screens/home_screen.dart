@@ -3,7 +3,7 @@ import 'package:semantica/core/component.dart';
 import 'package:semantica/features/pages/data/page_loader.dart';
 import 'package:semantica/widgets/central_area.dart';
 import 'package:semantica/widgets/dialogs/page_dialog.dart';
-import 'package:semantica/widgets/sidebar.dart';
+//import 'package:semantica/widgets/sidebar.dart';
 import 'package:semantica/widgets/custom_app_bar.dart'; // Importação da CustomAppBar
 
 class HomeScreen extends StatefulWidget {
@@ -29,7 +29,7 @@ class HomeScreenState extends State<HomeScreen> {
   void _showPageDialog() {
     showPageDialog(context, onSubmit: (filePath) async {
       try {
-        // Carrega a página do arquivo
+        // Processar o arquivo selecionado
         final page = await _pageLoader.loadPage(filePath);
         setState(() {
           _currentComponent = page;
@@ -55,11 +55,11 @@ class HomeScreenState extends State<HomeScreen> {
             flex: 5,
             child: CentralArea(component: _currentComponent),
           ),
-          if (_isSidebarVisible)
+          /*     if (_isSidebarVisible)
             const Expanded(
               flex: 2,
               child: Sidebar(),
-            ),
+            ),*/
         ],
       ),
     );

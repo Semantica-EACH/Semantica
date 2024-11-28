@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 abstract class Component {
   final String id;
   final String name;
@@ -5,5 +7,5 @@ abstract class Component {
   Component({required this.id, required this.name});
 
   // Método abstrato que será implementado pelas subclasses
-  Map<String, dynamic> render();
+  Widget render();
 }

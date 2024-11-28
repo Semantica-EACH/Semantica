@@ -1,12 +1,11 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-/// Renderizador de Markdown reutilizável
-class MarkdownRenderer extends StatelessWidget {
+/// Visualizador de Markdown reutilizável
+class MarkdownViewer extends StatelessWidget {
   final String markdownContent;
 
-  const MarkdownRenderer({
+  const MarkdownViewer({
     super.key,
     required this.markdownContent,
   });

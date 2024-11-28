@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:semantica/features/pages/domain/entities/page.dart' as my_page;
-import 'package:semantica/widgets/central_area.dart';
 import 'screens/home_screen.dart';
 
 void main() {
