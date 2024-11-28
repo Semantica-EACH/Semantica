@@ -1,11 +1,16 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+
 import 'package:semantica/core/component.dart';
+import 'package:semantica/features/pages/presentation/widgets/page_widget.dart';
 
 class Page extends Component {
-  final String path;
-  final String title;
-  final DateTime timestamp;
-  final List<String> metadata;
-  final String content;
+  String path;
+  String title;
+  DateTime timestamp;
+  List<String> metadata;
+  String content;
 
   bool isEditing;
 
@@ -18,17 +23,13 @@ class Page extends Component {
     this.isEditing = false,
   }) : super(id: path, name: title);
 
+  void saveContent() {
+    final file = File(path);
+    file.writeAsStringSync(content); // Salva o conteúdo no arquivo
+  }
+
   @override
-  Map<String, dynamic> render() {
-    return {
-      'path': path,
-      'name': name,
-      'type': 'Page',
-      'title': title,
-      'timestamp': timestamp.toIso8601String(),
-      'metadata': metadata,
-      'content': content,
-      'isEditing': isEditing,
-    };
+  Widget render() {
+    return PageWidget(page: this); // Usa o widget específico da página
   }
 }

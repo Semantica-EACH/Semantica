@@ -13,7 +13,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Row(
+      /* title: Row(
         children: [
           IconButton(
             icon: const Icon(Icons.home),
@@ -40,9 +40,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             },
           ),
         ],
-      ),
+      ), */
       actions: [
-        IconButton(
+        /*  IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -69,9 +69,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: const Icon(Icons.menu),
           onPressed: onToggleSidebar,
-        ),
+        ), */
         IconButton(
-          icon: const Icon(Icons.open_in_new),
+          icon: const Icon(Icons.file_open),
           onPressed: onShowPageDialog,
         ),
       ],
