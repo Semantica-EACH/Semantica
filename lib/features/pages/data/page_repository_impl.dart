@@ -27,6 +27,7 @@ class PageRepositoryImpl implements PageRepository {
     return await pageLoader.loadPage(path);
   }
 
+  @override
   Future<Page> fromBytes(Uint8List bytes, String fileName) async {
     try {
       // Converte os bytes em string (para arquivos de texto)
