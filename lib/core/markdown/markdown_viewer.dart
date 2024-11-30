@@ -12,6 +12,8 @@ class MarkdownViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Renderizando Markdown: $markdownContent');
+
     return Markdown(
       data: markdownContent,
       styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),

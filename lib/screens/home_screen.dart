@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:semantica/core/component.dart';
+import 'package:semantica/core/presentation/component.dart';
 import 'package:semantica/features/pages/data/page_loader.dart';
+import 'package:semantica/features/pages/data/page_repository_impl.dart';
+import 'package:semantica/features/pages/domain/usecases/get_page_usecase.dart';
+import 'package:semantica/features/pages/domain/usecases/save_page_usecase.dart';
+import 'package:semantica/features/pages/presentation/widgets/page_widget.dart';
 import 'package:semantica/widgets/central_area.dart';
 import 'package:semantica/widgets/dialogs/page_dialog.dart';
 //import 'package:semantica/widgets/sidebar.dart';
@@ -14,30 +18,55 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  bool _isSidebarVisible = true;
+  // bool _isSidebarVisible = true;
+  late final GetPageUseCase _getPageUseCase; // Instância do caso de uso
+  late final SavePageContentUseCase _savePageContentUseCase;
 
   Component? _currentComponent;
 
-  final PageLoader _pageLoader = PageLoader(); // Instância do PageLoader
-
+// Instância do PageLoader
+/*
   void _toggleSidebar() {
     setState(() {
       _isSidebarVisible = !_isSidebarVisible;
     });
   }
+*/
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Configurações para o caso de uso
+    final pageLoader = PageLoader();
+    final pageRepository = PageRepositoryImpl(pageLoader: pageLoader);
+    _getPageUseCase = GetPageUseCase(repository: pageRepository);
+    _savePageContentUseCase =
+        SavePageContentUseCase(repository: pageRepository);
+  }
 
   void _showPageDialog() {
     showPageDialog(context, onSubmit: (filePath) async {
       try {
-        // Processar o arquivo selecionado
-        final page = await _pageLoader.loadPage(filePath);
-        setState(() {
-          _currentComponent = page;
-        });
+        // Usa o caso de uso para carregar a entidade Page
+        final page = await _getPageUseCase.call(filePath);
+
+        // Converte a entidade Page em um componente de apresentação
+        if (mounted) {
+          setState(() {
+            _currentComponent = PageWidget(
+              page: page,
+              savePageContentUseCase:
+                  _savePageContentUseCase, // Ou o caso de uso correto
+            ) as Component?;
+          });
+        }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao carregar a página: $e')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erro ao carregar a página: $e')),
+          );
+        }
       }
     });
   }
@@ -46,7 +75,7 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        onToggleSidebar: _toggleSidebar,
+        //       onToggleSidebar: _toggleSidebar,
         onShowPageDialog: _showPageDialog,
       ),
       body: Row(

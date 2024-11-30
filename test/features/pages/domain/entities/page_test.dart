@@ -1,55 +1,78 @@
-import 'dart:io';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:semantica/features/pages/domain/entities/page.dart';
-import 'package:semantica/features/pages/presentation/widgets/page_widget.dart';
-import 'package:test/test.dart';
 
 void main() {
   group('Page', () {
-    test('render should return a PageWidget with correct page data', () {
-      // Arrange
-      final page = Page(
-        path: '/home/test-page',
-        title: 'Test Page',
-        timestamp: DateTime(2024, 1, 1, 12, 0),
-        metadata: ['tag1', 'tag2'],
-        content: 'This is the content of the page.',
-      );
+    const filePath = 'test.md';
+    const fileTitle = 'Test Page';
+    const fileContent = '# Test Content';
+    final fileTimestamp = DateTime(2023, 1, 1);
 
-      // Act
-      final widget = page.render();
-
-      // Assert
-      expect(widget, isA<PageWidget>()); // Verifica se é um PageWidget
-      final pageWidget = widget as PageWidget;
-      expect(pageWidget.page,
-          equals(page)); // Verifica se o PageWidget contém a página correta
-    });
-  });
-
-  group('Page.saveContent', () {
-    test('Deve salvar o conteúdo em um arquivo', () async {
-      // Arrange: Configura uma página com conteúdo
-      final tempDir = Directory.systemTemp.createTempSync();
-      final filePath = '${tempDir.path}/test.md';
+    test('should correctly initialize with given values', () {
       final page = Page(
         path: filePath,
-        title: 'Teste',
-        timestamp: DateTime.now(),
-        metadata: [],
-        content: 'Conteúdo inicial',
+        title: fileTitle,
+        timestamp: fileTimestamp,
+        metadata: ['Tag1', 'Tag2'],
+        content: fileContent,
       );
 
-      // Act: Chama o método saveContent
-      page.saveContent();
+      expect(page.path, equals(filePath));
+      expect(page.title, equals(fileTitle));
+      expect(page.timestamp, equals(fileTimestamp));
+      expect(page.metadata, equals(['Tag1', 'Tag2']));
+      expect(page.content, equals(fileContent));
+    });
 
-      // Assert: Verifica se o conteúdo foi salvo no arquivo
-      final file = File(filePath);
-      expect(file.existsSync(), isTrue);
-      final savedContent = file.readAsStringSync();
-      expect(savedContent, equals('Conteúdo inicial'));
+    test('should allow updating title and content', () {
+      final page = Page(
+        path: filePath,
+        title: fileTitle,
+        timestamp: fileTimestamp,
+        metadata: ['Tag1'],
+        content: fileContent,
+      );
 
-      // Cleanup: Remove o arquivo e diretório temporário
-      tempDir.deleteSync(recursive: true);
+      // Atualiza o título
+      const updatedTitle = 'Updated Test Page';
+      page.title = updatedTitle;
+      expect(page.title, equals(updatedTitle));
+
+      // Atualiza o conteúdo
+      const updatedContent = '# Updated Content';
+      page.content = updatedContent;
+      expect(page.content, equals(updatedContent));
+    });
+
+    test('should allow modifying metadata', () {
+      final page = Page(
+        path: filePath,
+        title: fileTitle,
+        timestamp: fileTimestamp,
+        metadata: ['Tag1'],
+        content: fileContent,
+      );
+
+      // Adiciona um novo metadado
+      page.metadata.add('Tag2');
+      expect(page.metadata, equals(['Tag1', 'Tag2']));
+
+      // Remove um metadado
+      page.metadata.remove('Tag1');
+      expect(page.metadata, equals(['Tag2']));
+    });
+
+    test('path should remain unchanged after initialization', () {
+      final page = Page(
+        path: filePath,
+        title: fileTitle,
+        timestamp: fileTimestamp,
+        metadata: [],
+        content: fileContent,
+      );
+
+      // Verifica que o valor do path permanece o mesmo
+      expect(page.path, equals(filePath));
     });
   });
 }

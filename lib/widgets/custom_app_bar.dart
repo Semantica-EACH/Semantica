@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final VoidCallback onToggleSidebar;
+//  final VoidCallback onToggleSidebar;
   final VoidCallback onShowPageDialog;
 
   const CustomAppBar({
     super.key,
-    required this.onToggleSidebar,
+    //  required this.onToggleSidebar,
     required this.onShowPageDialog,
   });
 

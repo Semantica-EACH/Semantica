@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:semantica/core/component.dart';
+import 'package:semantica/core/presentation/component.dart';
 
 class CentralArea extends StatelessWidget {
   final Component? component;
@@ -17,11 +17,12 @@ class CentralArea extends StatelessWidget {
                 style: TextStyle(fontSize: 20),
               ),
             )
-          : _renderComponent(component!),
+          : _renderComponent(context, component!),
     );
   }
 
-  Widget _renderComponent(Component component) {
-    return component.render(); // Delegação para o método render do componente
+  Widget _renderComponent(BuildContext context, Component component) {
+    return component
+        .renderCentral(context); // Passa o BuildContext para o método render
   }
 }
