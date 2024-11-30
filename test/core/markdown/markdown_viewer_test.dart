@@ -9,7 +9,7 @@ void main() {
       const markdownContent = '# Test Header\nThis is a test paragraph.';
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: MarkdownViewer(markdownContent: markdownContent),
         ),
       );

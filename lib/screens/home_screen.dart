@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:semantica/core/presentation/component.dart';
 import 'package:semantica/features/pages/data/page_loader.dart';
 import 'package:semantica/features/pages/data/page_repository_impl.dart';
+import 'package:semantica/features/pages/domain/usecases/get_page_from_byte.dart';
 import 'package:semantica/features/pages/domain/usecases/get_page_usecase.dart';
 import 'package:semantica/features/pages/domain/usecases/save_page_usecase.dart';
 import 'package:semantica/features/pages/presentation/widgets/page_widget.dart';
@@ -20,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> {
   // bool _isSidebarVisible = true;
   late final GetPageUseCase _getPageUseCase; // Instância do caso de uso
+  late final GetPageFromBytesUseCase
+      _getPageFromBytesUseCase; // Instância do caso de uso
   late final SavePageContentUseCase _savePageContentUseCase;
 
   Component? _currentComponent;
@@ -41,25 +44,41 @@ class HomeScreenState extends State<HomeScreen> {
     final pageLoader = PageLoader();
     final pageRepository = PageRepositoryImpl(pageLoader: pageLoader);
     _getPageUseCase = GetPageUseCase(repository: pageRepository);
+    _getPageFromBytesUseCase =
+        GetPageFromBytesUseCase(repository: pageRepository);
+
     _savePageContentUseCase =
         SavePageContentUseCase(repository: pageRepository);
   }
 
   void _showPageDialog() {
-    showPageDialog(context, onSubmit: (filePath) async {
+    showPageDialog(context, onSubmit: (filePathOrName, fileBytes) async {
       try {
-        // Usa o caso de uso para carregar a entidade Page
-        final page = await _getPageUseCase.call(filePath);
+        // Se os bytes estiverem disponíveis (Web), use-os
+        if (fileBytes != null) {
+          final page =
+              await _getPageFromBytesUseCase.call(fileBytes, filePathOrName);
+          if (mounted) {
+            setState(() {
+              _currentComponent = PageWidget(
+                page: page,
+                savePageContentUseCase: _savePageContentUseCase,
+              ) as Component?;
+            });
+          }
+        }
+        // Caso contrário, use o caminho do arquivo (Mobile/Desktop)
+        else {
+          final page = await _getPageUseCase.call(filePathOrName);
 
-        // Converte a entidade Page em um componente de apresentação
-        if (mounted) {
-          setState(() {
-            _currentComponent = PageWidget(
-              page: page,
-              savePageContentUseCase:
-                  _savePageContentUseCase, // Ou o caso de uso correto
-            ) as Component?;
-          });
+          if (mounted) {
+            setState(() {
+              _currentComponent = PageWidget(
+                page: page,
+                savePageContentUseCase: _savePageContentUseCase,
+              ) as Component?;
+            });
+          }
         }
       } catch (e) {
         if (mounted) {
