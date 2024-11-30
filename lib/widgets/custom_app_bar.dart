@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-//  final VoidCallback onToggleSidebar;
+  final VoidCallback onToggleSidebar;
   final VoidCallback onShowPageDialog;
 
   const CustomAppBar({
     super.key,
-    //  required this.onToggleSidebar,
+    required this.onToggleSidebar,
     required this.onShowPageDialog,
   });
 
@@ -66,13 +66,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             );
           },
         ),
-        IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: onToggleSidebar,
-        ), */
+        */
+
         IconButton(
           icon: const Icon(Icons.file_open),
           onPressed: onShowPageDialog,
+        ),
+        IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: onToggleSidebar,
         ),
       ],
     );

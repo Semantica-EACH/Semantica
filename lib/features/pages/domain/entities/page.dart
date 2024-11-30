@@ -1,4 +1,6 @@
-class Page {
+import 'package:semantica/features/component/domain/entities/component.dart';
+
+class Page implements Component {
   final String path;
   String title;
   DateTime timestamp;

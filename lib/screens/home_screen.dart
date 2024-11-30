@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:semantica/core/presentation/component.dart';
+import 'package:semantica/features/component/presentation/widgets/component_view.dart';
 import 'package:semantica/features/pages/data/page_loader.dart';
 import 'package:semantica/features/pages/data/page_repository_impl.dart';
 import 'package:semantica/features/pages/domain/usecases/get_page_from_byte.dart';
@@ -8,8 +8,8 @@ import 'package:semantica/features/pages/domain/usecases/save_page_usecase.dart'
 import 'package:semantica/features/pages/presentation/widgets/page_widget.dart';
 import 'package:semantica/widgets/central_area.dart';
 import 'package:semantica/widgets/dialogs/page_dialog.dart';
-//import 'package:semantica/widgets/sidebar.dart';
-import 'package:semantica/widgets/custom_app_bar.dart'; // Importação da CustomAppBar
+import 'package:semantica/widgets/sidebar.dart';
+import 'package:semantica/widgets/custom_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,34 +19,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  // bool _isSidebarVisible = true;
-  late final GetPageUseCase _getPageUseCase; // Instância do caso de uso
-  late final GetPageFromBytesUseCase
-      _getPageFromBytesUseCase; // Instância do caso de uso
+  bool _isSidebarVisible = true;
+  late final GetPageUseCase _getPageUseCase;
+  late final GetPageFromBytesUseCase _getPageFromBytesUseCase;
   late final SavePageContentUseCase _savePageContentUseCase;
 
-  Component? _currentComponent;
+  ComponentView? _currentComponent;
+  final List<ComponentView> _sidebarComponents = []; // Componentes no Sidebar
 
-// Instância do PageLoader
-/*
   void _toggleSidebar() {
     setState(() {
       _isSidebarVisible = !_isSidebarVisible;
     });
   }
-*/
 
   @override
   void initState() {
     super.initState();
 
-    // Configurações para o caso de uso
     final pageLoader = PageLoader();
     final pageRepository = PageRepositoryImpl(pageLoader: pageLoader);
     _getPageUseCase = GetPageUseCase(repository: pageRepository);
     _getPageFromBytesUseCase =
         GetPageFromBytesUseCase(repository: pageRepository);
-
     _savePageContentUseCase =
         SavePageContentUseCase(repository: pageRepository);
   }
@@ -54,31 +49,20 @@ class HomeScreenState extends State<HomeScreen> {
   void _showPageDialog() {
     showPageDialog(context, onSubmit: (filePathOrName, fileBytes) async {
       try {
-        // Se os bytes estiverem disponíveis (Web), use-os
-        if (fileBytes != null) {
-          final page =
-              await _getPageFromBytesUseCase.call(fileBytes, filePathOrName);
-          if (mounted) {
-            setState(() {
-              _currentComponent = PageWidget(
-                page: page,
-                savePageContentUseCase: _savePageContentUseCase,
-              ) as Component?;
-            });
-          }
-        }
-        // Caso contrário, use o caminho do arquivo (Mobile/Desktop)
-        else {
-          final page = await _getPageUseCase.call(filePathOrName);
+        final page = fileBytes != null
+            ? await _getPageFromBytesUseCase.call(fileBytes, filePathOrName)
+            : await _getPageUseCase.call(filePathOrName);
 
-          if (mounted) {
-            setState(() {
-              _currentComponent = PageWidget(
-                page: page,
-                savePageContentUseCase: _savePageContentUseCase,
-              ) as Component?;
-            });
-          }
+        final newComponent = PageWidget(
+          component: page,
+          savePageContentUseCase: _savePageContentUseCase,
+          isExpanded: false,
+        );
+
+        if (mounted) {
+          setState(() {
+            _sidebarComponents.add(newComponent); // Adiciona ao Sidebar
+          });
         }
       } catch (e) {
         if (mounted) {
@@ -90,11 +74,24 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _maximizeComponent(ComponentView component) {
+    setState(() {
+      _currentComponent = component;
+      _sidebarComponents.remove(component);
+    });
+  }
+
+  void _expandComponent(ComponentView component) {
+    setState(() {
+      component.isExpanded = !component.isExpanded;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        //       onToggleSidebar: _toggleSidebar,
+        onToggleSidebar: _toggleSidebar,
         onShowPageDialog: _showPageDialog,
       ),
       body: Row(
@@ -103,11 +100,16 @@ class HomeScreenState extends State<HomeScreen> {
             flex: 5,
             child: CentralArea(component: _currentComponent),
           ),
-          /*     if (_isSidebarVisible)
-            const Expanded(
+          if (_isSidebarVisible)
+            Expanded(
               flex: 2,
-              child: Sidebar(),
-            ),*/
+              child: Sidebar(
+                components:
+                    _sidebarComponents, // Passa os componentes do Sidebar
+                onMaximize: _maximizeComponent, // Callback para maximizar
+                onExpand: _expandComponent, // Callback para expandir
+              ),
+            ),
         ],
       ),
     );

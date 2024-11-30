@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:semantica/core/presentation/component.dart';
+import 'package:semantica/features/component/presentation/widgets/component_view.dart';
 
 class CentralArea extends StatelessWidget {
-  final Component? component;
+  final ComponentView? component;
 
   const CentralArea({super.key, this.component});
 
@@ -21,8 +21,21 @@ class CentralArea extends StatelessWidget {
     );
   }
 
-  Widget _renderComponent(BuildContext context, Component component) {
-    return component
-        .renderCentral(context); // Passa o BuildContext para o método render
+  Widget _renderComponent(BuildContext context, ComponentView component) {
+    return component.renderCentral(
+      context,
+      () {
+        // Lógica de minimizar (pode ser vazia ou definida por você)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Componente minimizado')),
+        );
+      },
+      () {
+        // Lógica de fechar (pode ser vazia ou definida por você)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Componente fechado')),
+        );
+      },
+    );
   }
 }
