@@ -1,8 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:semantica/features/component/domain/usecases/close_component_usecase.dart';
+import 'package:semantica/features/component/domain/usecases/maximize_component_usecase.dart';
+import 'package:semantica/features/component/domain/usecases/minimize_component_usecase.dart';
+import 'package:semantica/features/component/domain/usecases/open_component.dart';
+import 'package:semantica/features/component/presentation/cubit/component_cubit.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+  BlocProvider(
+      create: (_) => ComponentCubit(
+        initialSidebarComponents: [],
+        maximizeUseCase: MaximizeComponentUseCase(),
+        minimizeUseCase: MinimizeComponentUseCase(),
+        closeUseCase: CloseComponentUseCase(),
+        openComponentUseCase: OpenComponentUseCase()
+      ),
+      child: const MyApp(),
+    ),
+  );  
 }
 
 class MyApp extends StatelessWidget {

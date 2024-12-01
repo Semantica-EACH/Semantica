@@ -10,3 +10,9 @@ class ComponentUpdated extends ComponentCubitState {
 
   ComponentUpdated(this.sidebarComponents, this.centralComponent);
 }
+
+class ComponentOpened extends ComponentCubitState {
+  final ComponentView? centralComponent; // Componente maximizado (ou null)
+
+  ComponentOpened(this.centralComponent);
+}

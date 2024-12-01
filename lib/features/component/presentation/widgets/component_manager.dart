@@ -1,11 +1,11 @@
-// feature/presentation/widgets/component_manager.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:semantica/features/component/presentation/cubit/component_cubit.dart';
 import 'package:semantica/features/component/presentation/cubit/component_cubit_states.dart';
 
 class ComponentManager extends StatelessWidget {
+  const ComponentManager({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ComponentCubit, ComponentCubitState>(
@@ -18,7 +18,7 @@ class ComponentManager extends StatelessWidget {
           return Row(
             children: [
               // Barra lateral com componentes minimizados
-              Container(
+              SizedBox(
                 width: 200,
                 child: ListView(
                   children: sidebarComponents.map((componentView) {
@@ -48,15 +48,18 @@ class ComponentManager extends StatelessWidget {
                         () => context
                             .read<ComponentCubit>()
                             .closeComponent(centralComponent.component.title),
+                        () => context
+                            .read<ComponentCubit>()
+                            .open(centralComponent),
                       )
-                    : Center(child: Text("Nenhum componente maximizado")),
+                    : const Center(child: Text("Nenhum componente maximizado")),
               ),
             ],
           );
         }
 
         // Estado inicial ou carregando
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }

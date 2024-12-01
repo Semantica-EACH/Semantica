@@ -1,20 +1,21 @@
-import 'package:semantica/features/component/domain/entities/component.dart';
 import 'package:semantica/features/component/presentation/widgets/component_view.dart';
 
 class MinimizeComponentUseCase {
   /// Atualiza os estados dos componentes para minimizar o central
-  Map<String, dynamic> call(String title, ComponentView? centralComponent,
-      List<ComponentView> sidebarComponents) {
-    if (centralComponent == null) {
-      throw Exception("Nenhum componente central para minimizar");
-    }
-
-    final updatedSidebarComponents = List<ComponentView>.from(sidebarComponents)
-      ..add(centralComponent);
-
+Map<String, dynamic> call(String title, ComponentView? centralComponent, List<ComponentView> sidebarComponents) {
+  
+  if (centralComponent != null && centralComponent.component.title == title) {
     return {
-      'sidebarComponents': updatedSidebarComponents,
+      'sidebarComponents': [...sidebarComponents, centralComponent],
       'centralComponent': null,
     };
   }
+
+  return {
+    'sidebarComponents': sidebarComponents,
+    'centralComponent': centralComponent,
+  };
+}
+
+
 }

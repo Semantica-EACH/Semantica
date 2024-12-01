@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:semantica/core/markdown/markdown_editor.dart';
 import 'package:semantica/core/markdown/markdown_viewer.dart';
 import 'package:semantica/features/component/presentation/widgets/component_view.dart';
@@ -57,9 +56,7 @@ class PageWidget extends ComponentView {
                 ),
               ),
             ),
-            if (isCentral)
-              Expanded(
-                child: Padding(
+                Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: state is PageEditing
                       ? MarkdownEditor(
@@ -72,13 +69,6 @@ class PageWidget extends ComponentView {
                           markdownContent: component.content,
                         ),
                 ),
-              )
-            else
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: state is PageEditing
-                      ? const Text("Modo de edição ativo")
-                      : const Text("Modo Visualização.")),
           ],
         ),
       ),
@@ -92,8 +82,12 @@ class PageWidget extends ComponentView {
           page: component, savePageContentUseCase: savePageContentUseCase),
       child: BlocBuilder<PageCubit, PageState>(
         builder: (context, state) {
-          return _buildMainContent(context, state, isCentral: true);
-        },
+          return Padding(
+            padding: const EdgeInsets.all(16.0), // Adiciona o padding
+            child: SingleChildScrollView(
+            child: _buildMainContent(context, state), // Adiciona scrolling
+          ),
+        );},
       ),
     );
   }
@@ -105,7 +99,7 @@ class PageWidget extends ComponentView {
           page: component, savePageContentUseCase: savePageContentUseCase),
       child: BlocBuilder<PageCubit, PageState>(
         builder: (context, state) {
-          return _buildMainContent(context, state, isCentral: false);
+          return _buildMainContent(context, state);
         },
       ),
     );
@@ -118,7 +112,7 @@ class PageWidget extends ComponentView {
           page: component, savePageContentUseCase: savePageContentUseCase),
       child: BlocBuilder<PageCubit, PageState>(
         builder: (context, state) {
-          return _buildMainContent(context, state, isCentral: true);
+          return _buildMainContent(context, state);
         },
       ),
     );

@@ -12,7 +12,7 @@ class MarkdownViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Markdown(
+    return MarkdownBody(
       data: markdownContent,
       styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
     );

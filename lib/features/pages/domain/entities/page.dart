@@ -2,6 +2,7 @@ import 'package:semantica/features/component/domain/entities/component.dart';
 
 class Page implements Component {
   final String path;
+  @override
   String title;
   DateTime timestamp;
   List<String> metadata;

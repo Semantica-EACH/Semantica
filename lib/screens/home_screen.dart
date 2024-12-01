@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:semantica/features/component/presentation/widgets/component_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:semantica/features/component/presentation/cubit/component_cubit.dart';
 import 'package:semantica/features/pages/data/page_loader.dart';
 import 'package:semantica/features/pages/data/page_repository_impl.dart';
 import 'package:semantica/features/pages/domain/usecases/get_page_from_byte.dart';
@@ -24,8 +25,7 @@ class HomeScreenState extends State<HomeScreen> {
   late final GetPageFromBytesUseCase _getPageFromBytesUseCase;
   late final SavePageContentUseCase _savePageContentUseCase;
 
-  ComponentView? _currentComponent;
-  final List<ComponentView> _sidebarComponents = []; // Componentes no Sidebar
+// Componentes no Sidebar
 
   void _toggleSidebar() {
     setState(() {
@@ -59,10 +59,8 @@ class HomeScreenState extends State<HomeScreen> {
           isExpanded: false,
         );
 
-        if (mounted) {
-          setState(() {
-            _sidebarComponents.add(newComponent); // Adiciona ao Sidebar
-          });
+        if (mounted) {    
+           context.read<ComponentCubit>().open(newComponent);
         }
       } catch (e) {
         if (mounted) {
@@ -74,44 +72,26 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _maximizeComponent(ComponentView component) {
-    setState(() {
-      _currentComponent = component;
-      _sidebarComponents.remove(component);
-    });
-  }
-
-  void _expandComponent(ComponentView component) {
-    setState(() {
-      component.isExpanded = !component.isExpanded;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        onToggleSidebar: _toggleSidebar,
-        onShowPageDialog: _showPageDialog,
-      ),
-      body: Row(
-        children: [
-          Expanded(
-            flex: 5,
-            child: CentralArea(component: _currentComponent),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: CustomAppBar(
+      onToggleSidebar: _toggleSidebar,
+      onShowPageDialog: _showPageDialog,
+    ),
+    body: Row(
+      children: [
+        const Expanded(
+          flex: 5,
+          child: CentralArea(),
+        ),
+        if (_isSidebarVisible)
+          const Expanded(
+            flex: 2,
+            child: Sidebar(),
           ),
-          if (_isSidebarVisible)
-            Expanded(
-              flex: 2,
-              child: Sidebar(
-                components:
-                    _sidebarComponents, // Passa os componentes do Sidebar
-                onMaximize: _maximizeComponent, // Callback para maximizar
-                onExpand: _expandComponent, // Callback para expandir
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+      ],
+    ),
+  );
+}
 }

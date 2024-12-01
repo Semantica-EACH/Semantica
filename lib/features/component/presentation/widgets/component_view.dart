@@ -21,7 +21,7 @@ abstract class ComponentView extends StatelessWidget {
 
   /// Renderiza a área central com os botões no canto superior direito
   Widget renderCentral(
-      BuildContext context, VoidCallback onMinimize, VoidCallback onClose) {
+      BuildContext context, VoidCallback onMinimize, VoidCallback onClose, VoidCallback onOpen) {
     return Column(
       children: [
         // Barra superior com os botões de minimizar e fechar
@@ -33,14 +33,14 @@ abstract class ComponentView extends StatelessWidget {
               const SizedBox(), // Espaço vazio no canto esquerdo
               Row(
                 children: [
-                  ElevatedButton(
+                  IconButton(
                     onPressed: onMinimize,
-                    child: const Icon(Icons.remove),
+                    icon: const Icon(Icons.remove),
                   ),
                   const SizedBox(width: 8),
-                  ElevatedButton(
+                  IconButton(
                     onPressed: onClose,
-                    child: const Icon(Icons.close),
+                    icon: const Icon(Icons.close),
                   ),
                 ],
               ),
