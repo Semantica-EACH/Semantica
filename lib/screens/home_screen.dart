@@ -7,9 +7,9 @@ import 'package:semantica/features/pages/domain/usecases/get_page_from_byte.dart
 import 'package:semantica/features/pages/domain/usecases/get_page_usecase.dart';
 import 'package:semantica/features/pages/domain/usecases/save_page_usecase.dart';
 import 'package:semantica/features/pages/presentation/widgets/page_widget.dart';
-import 'package:semantica/widgets/central_area.dart';
+import 'package:semantica/features/component_list/presentation/widgets/central_area.dart';
 import 'package:semantica/widgets/dialogs/page_dialog.dart';
-import 'package:semantica/widgets/sidebar.dart';
+import 'package:semantica/features/component_list/presentation/widgets/sidebar.dart';
 import 'package:semantica/widgets/custom_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -56,11 +56,13 @@ class HomeScreenState extends State<HomeScreen> {
         final newComponent = PageWidget(
           component: page,
           savePageContentUseCase: _savePageContentUseCase,
-          isExpanded: false,
         );
 
-        if (mounted) {    
-           context.read<ComponentCubit>().open(newComponent);
+        if (mounted) {
+          context.read<ComponentCubit>().openComponent(page);
+          final centralAreaState =
+              context.findAncestorStateOfType<CentralAreaState>();
+          centralAreaState?.updateComponent(newComponent);
         }
       } catch (e) {
         if (mounted) {
@@ -72,26 +74,33 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: CustomAppBar(
-      onToggleSidebar: _toggleSidebar,
-      onShowPageDialog: _showPageDialog,
-    ),
-    body: Row(
-      children: [
-        const Expanded(
-          flex: 5,
-          child: CentralArea(),
-        ),
-        if (_isSidebarVisible)
-          const Expanded(
-            flex: 2,
-            child: Sidebar(),
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      appBar: CustomAppBar(
+        onToggleSidebar: _toggleSidebar,
+        onShowPageDialog: _showPageDialog,
+      ),
+      body: Row(
+        children: [
+          Expanded(
+            flex: 5,
+            child: Container(
+              color: theme.colorScheme.primary,
+              child: const CentralArea(),
+            ),
           ),
-      ],
-    ),
-  );
-}
+          if (_isSidebarVisible)
+            Expanded(
+              flex: 2,
+              child: Container(
+                color: theme.colorScheme.secondary,
+                child: const Sidebar(),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 }

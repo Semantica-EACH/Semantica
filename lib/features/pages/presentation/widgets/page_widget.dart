@@ -16,9 +16,9 @@ class PageWidget extends ComponentView {
 
   PageWidget(
       {super.key,
-      required super.isExpanded,
       required this.component,
-      required this.savePageContentUseCase});
+      required this.savePageContentUseCase})
+      : super(component: component); // Chamar o construtor da classe base
 
   /// Renderização principal compartilhada
   Widget _buildMainContent(BuildContext context, PageState state,
@@ -56,19 +56,19 @@ class PageWidget extends ComponentView {
                 ),
               ),
             ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: state is PageEditing
-                      ? MarkdownEditor(
-                          initialContent: component.content,
-                          onContentChanged: (newContent) {
-                            pageCubit.exitEditMode(newContent);
-                          },
-                        )
-                      : MarkdownViewer(
-                          markdownContent: component.content,
-                        ),
-                ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: state is PageEditing
+                  ? MarkdownEditor(
+                      initialContent: component.content,
+                      onContentChanged: (newContent) {
+                        pageCubit.exitEditMode(newContent);
+                      },
+                    )
+                  : MarkdownViewer(
+                      markdownContent: component.content,
+                    ),
+            ),
           ],
         ),
       ),
@@ -85,9 +85,10 @@ class PageWidget extends ComponentView {
           return Padding(
             padding: const EdgeInsets.all(16.0), // Adiciona o padding
             child: SingleChildScrollView(
-            child: _buildMainContent(context, state), // Adiciona scrolling
-          ),
-        );},
+              child: _buildMainContent(context, state), // Adiciona scrolling
+            ),
+          ); // Corrigir o fechamento do Padding
+        },
       ),
     );
   }

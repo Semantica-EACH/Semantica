@@ -1,80 +1,60 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bloc/bloc.dart';
+import 'package:semantica/features/component/domain/entities/component.dart';
 import 'package:semantica/features/component/domain/usecases/close_component_usecase.dart';
 import 'package:semantica/features/component/domain/usecases/maximize_component_usecase.dart';
 import 'package:semantica/features/component/domain/usecases/minimize_component_usecase.dart';
-import 'package:semantica/features/component/domain/usecases/open_component.dart';
-import 'package:semantica/features/component/presentation/widgets/component_view.dart';
-import 'component_cubit_states.dart';
+import 'package:semantica/features/component/domain/usecases/open_component_usecase.dart';
+import 'package:semantica/features/component/presentation/cubit/component_cubit_states.dart';
+import 'package:semantica/features/component_list/domain/entities/central_stack.dart';
+import 'package:semantica/features/component_list/domain/entities/side_list.dart';
 
-class ComponentCubit extends Cubit<ComponentCubitState> {
+class ComponentCubit extends Cubit<ComponentState> {
   final MaximizeComponentUseCase maximizeUseCase;
   final MinimizeComponentUseCase minimizeUseCase;
   final CloseComponentUseCase closeUseCase;
   final OpenComponentUseCase openComponentUseCase;
 
-  List<ComponentView> _sidebarComponents;
-  ComponentView? _centralComponent;
-  
+  final SideList sideList;
+  final CentralStack centralStack;
 
   ComponentCubit({
-    required List<ComponentView> initialSidebarComponents,
     required this.maximizeUseCase,
     required this.minimizeUseCase,
     required this.openComponentUseCase,
-    required this.closeUseCase
-  })  : _sidebarComponents = initialSidebarComponents,
-        _centralComponent = null,
-        super(ComponentInitial());
+    required this.closeUseCase,
+    required this.sideList,
+    required this.centralStack,
+  }) : super(ComponentInitial());
 
-  void expandComponent(String title) {
-    final updatedComponents = _sidebarComponents.map((component) {
-      if (component.component.title == title) {
-        component.isExpanded = !component.isExpanded;
-      }
-      return component;
-    }).toList();
-
-    emit(ComponentUpdated(updatedComponents, _centralComponent));
+  void openComponent(Component component) {
+    openComponentUseCase.call(component: component, centralStack: centralStack);
+    emit(ComponentUpdated(sideList.components, centralStack.currentComponent));
   }
 
-  void open(ComponentView newComponent) {
-    _centralComponent = newComponent; // Define o componente centralizado
-
-    emit(ComponentOpened(_centralComponent)); // Emite o novo estado
+  void maximizeComponent(Component component) {
+    maximizeUseCase.call(
+        component: component, sideList: sideList, centralStack: centralStack);
+    emit(ComponentUpdated(
+      sideList.components,
+      centralStack.currentComponent,
+    ));
   }
 
-
-  void maximize(String title, [ComponentView? newComponent]) {
-  final result = maximizeUseCase.call(
-    title,
-    _sidebarComponents,
-    _centralComponent,
-  );
-
-  _sidebarComponents = result['sidebarComponents'];
-  _centralComponent = result['centralComponent'];
-
-  emit(ComponentUpdated(_sidebarComponents, _centralComponent));
-}
-
-
-  void minimize(String title) {
-    final result =
-        minimizeUseCase.call(title, _centralComponent, _sidebarComponents);
-
-    _sidebarComponents = result['sidebarComponents'];
-    _centralComponent = result['centralComponent'];
-
-    emit(ComponentUpdated(_sidebarComponents, _centralComponent));
+  void minimizeComponent(Component component) {
+    minimizeUseCase.call(
+        component: component, sideList: sideList, centralStack: centralStack);
+    emit(ComponentUpdated(
+      sideList.components,
+      centralStack.currentComponent,
+    ));
   }
 
-  void closeComponent(String title) {
-    final result =
-        closeUseCase.call(title, _sidebarComponents, _centralComponent);
-
-    _sidebarComponents = result['sidebarComponents'];
-    _centralComponent = result['centralComponent'];
-
-    emit(ComponentUpdated(_sidebarComponents, _centralComponent));
+  void closeComponent(Component component) {
+    closeUseCase.call(component: component, componentList: sideList);
+    closeUseCase.call(component: component, componentList: centralStack);
+    emit(ComponentUpdated(
+      sideList.components,
+      centralStack.currentComponent,
+    ));
   }
 }

@@ -1,25 +1,22 @@
-import 'package:semantica/features/component/presentation/widgets/component_view.dart';
+import 'package:semantica/features/component_list/domain/entities/central_stack.dart';
+import 'package:semantica/features/component/domain/entities/component.dart';
+import 'package:semantica/features/component_list/domain/entities/side_list.dart';
 
 class MaximizeComponentUseCase {
   /// Atualiza os estados dos componentes para maximizar um
-  Map<String, dynamic> call(String title, List<ComponentView> sidebarComponents,
-      ComponentView? centralComponent) {
-    // Localiza o componente na barra lateral
-    final maximizedComponent = sidebarComponents.firstWhere(
-      (component) => component.component.title == title,
-      orElse: () =>
-          throw Exception("Componente não encontrado na barra lateral"),
-    );
+  void call(
+      {required Component component,
+      required SideList sideList,
+      required CentralStack centralStack}) {
+    // Verifica se o componente está na barra lateral
+    if (!sideList.components.contains(component)) {
+      throw Exception('Componente não encontrado na barra lateral');
+    }
 
     // Remove o componente da barra lateral
-    final updatedSidebarComponents = List<ComponentView>.from(sidebarComponents)
-      ..remove(maximizedComponent);
-    
-    return {
-      'sidebarComponents': updatedSidebarComponents,
-      'centralComponent': maximizedComponent,
-    };
+    sideList.removeComponent(component);
+
+    // Adiciona o componente à área central
+    centralStack.addComponent(component);
   }
 }
-
-

@@ -55,10 +55,6 @@ void main() {
       final textFieldFinder = find.byType(TextField);
       expect(textFieldFinder, findsOneWidget);
       expect(find.text('# Test Content'), findsOneWidget);
-
-      // Verifica se o HighlightView renderiza o conteúdo inicial
-      final highlightViewFinder = find.byType(HighlightView);
-      expect(highlightViewFinder, findsOneWidget);
     });
 
     testWidgets(

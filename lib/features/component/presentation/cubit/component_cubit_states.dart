@@ -1,18 +1,12 @@
-import 'package:semantica/features/component/presentation/widgets/component_view.dart';
+import 'package:semantica/features/component/domain/entities/component.dart';
 
-abstract class ComponentCubitState {}
+abstract class ComponentState {}
 
-class ComponentInitial extends ComponentCubitState {}
+class ComponentInitial extends ComponentState {}
 
-class ComponentUpdated extends ComponentCubitState {
-  final List<ComponentView> sidebarComponents; // Componentes minimizados
-  final ComponentView? centralComponent; // Componente maximizado (ou null)
+class ComponentUpdated extends ComponentState {
+  final List<Component> sidebarComponents;
+  final Component? centralComponent;
 
   ComponentUpdated(this.sidebarComponents, this.centralComponent);
-}
-
-class ComponentOpened extends ComponentCubitState {
-  final ComponentView? centralComponent; // Componente maximizado (ou null)
-
-  ComponentOpened(this.centralComponent);
 }
