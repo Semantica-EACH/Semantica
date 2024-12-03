@@ -30,15 +30,21 @@ class CentralAreaState extends State<CentralArea> {
   Widget build(BuildContext context) {
     return BlocBuilder<ComponentCubit, ComponentState>(
       builder: (context, state) {
-        if (state is ComponentUpdated) {
-          centralComponent = state.centralComponent?.toComponentView();
-        }
-
-        return Container(
-          color: Theme.of(context).colorScheme.primary,
-          child: centralComponent == null
-              ? Container()
-              : _renderComponent(context, centralComponent!),
+        return BlocListener<ComponentCubit, ComponentState>(
+          listener: (context, state) {
+            if (state is ComponentUpdated) {
+              setState(() {
+                centralComponent =
+                    state.centralStack.getCurrentComponent()?.toComponentView();
+              });
+            }
+          },
+          child: Container(
+            color: Theme.of(context).colorScheme.primary,
+            child: centralComponent == null
+                ? Container()
+                : _renderComponent(context, centralComponent!),
+          ),
         );
       },
     );

@@ -25,6 +25,8 @@ class CentralStack implements ComponentList {
     // Adicionar o novo componente ao final da lista
     _components.add(component);
     _currentIndex = _components.length - 1;
+    print("tamanho: ${_components.length}");
+    print("indice: $_currentIndex");
   }
 
   @override
@@ -42,12 +44,14 @@ class CentralStack implements ComponentList {
     if (_currentIndex > 0) {
       _currentIndex--;
     }
+    print("indice: $_currentIndex");
   }
 
   void navigateToNext() {
     if (_currentIndex < _components.length - 1) {
       _currentIndex++;
     }
+    print("indice: $_currentIndex");
   }
 
   void clear() {
@@ -55,7 +59,17 @@ class CentralStack implements ComponentList {
     _currentIndex = -1;
   }
 
-  Component? getCurrentComponent() {
-    return currentComponent;
+  bool isLast() {
+    print("tamanho: ${_components.length}");
+    print("indice: $_currentIndex");
+    return _currentIndex >= _components.length - 1;
   }
+
+  bool isFirst() {
+    print("tamanho: ${_components.length}");
+    print("indice: $_currentIndex");
+    return _currentIndex <= 0;
+  }
+
+  Component? getCurrentComponent() => currentComponent;
 }

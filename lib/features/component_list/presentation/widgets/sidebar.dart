@@ -22,7 +22,7 @@ class _SidebarState extends State<Sidebar> {
         builder: (context, state) {
           if (state is ComponentUpdated) {
             return ListView(
-              children: state.sidebarComponents.map((component) {
+              children: state.sideList.components.map((component) {
                 final componentView = component.toComponentView();
                 final isExpanded = _expandedComponents[component] ?? false;
 

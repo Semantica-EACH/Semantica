@@ -5,6 +5,8 @@ import 'package:semantica/features/component/domain/usecases/close_component_use
 import 'package:semantica/features/component/domain/usecases/maximize_component_usecase.dart';
 import 'package:semantica/features/component/domain/usecases/minimize_component_usecase.dart';
 import 'package:semantica/features/component/domain/usecases/open_component_usecase.dart';
+import 'package:semantica/features/component/domain/usecases/redo_usecase.dart';
+import 'package:semantica/features/component/domain/usecases/undo_usecase.dart';
 import 'package:semantica/features/component/presentation/cubit/component_cubit.dart';
 import 'package:semantica/features/component/presentation/cubit/component_cubit_states.dart';
 import 'package:semantica/features/component_list/domain/entities/central_stack.dart';
@@ -26,6 +28,10 @@ class MockSideList extends Mock implements SideList {}
 
 class MockCentralStack extends Mock implements CentralStack {}
 
+class MockUndoUseCase extends Mock implements UndoUseCase {}
+
+class MockRedoUseCase extends Mock implements RedoUseCase {}
+
 void main() {
   late ComponentCubit componentCubit;
   late MockOpenComponentUseCase mockOpenComponentUseCase;
@@ -34,6 +40,8 @@ void main() {
   late MockCloseComponentUseCase mockCloseUseCase;
   late MockSideList mockSideList;
   late MockCentralStack mockCentralStack;
+  late MockUndoUseCase mockUndoUseCase;
+  late MockRedoUseCase mockRedoUseCase;
 
   setUp(() {
     mockOpenComponentUseCase = MockOpenComponentUseCase();
@@ -42,6 +50,8 @@ void main() {
     mockCloseUseCase = MockCloseComponentUseCase();
     mockSideList = MockSideList();
     mockCentralStack = MockCentralStack();
+    mockUndoUseCase = MockUndoUseCase();
+    mockRedoUseCase = MockRedoUseCase();
 
     when(() => mockSideList.components).thenReturn([]);
     when(() => mockCentralStack.components).thenReturn([]);
@@ -53,6 +63,8 @@ void main() {
       closeUseCase: mockCloseUseCase,
       sideList: mockSideList,
       centralStack: mockCentralStack,
+      undoUseCase: mockUndoUseCase,
+      redoUseCase: mockRedoUseCase,
     );
   });
 
@@ -69,7 +81,7 @@ void main() {
         ],
         verify: (_) {
           verify(() => mockOpenComponentUseCase.call(
-              component: component, centralStack: mockCentralStack)).called(1);
+              component: component, componentList: mockCentralStack)).called(1);
         },
       );
     });
@@ -123,6 +135,24 @@ void main() {
               component: component, componentList: mockCentralStack)).called(1);
         },
       );
+    });
+
+    test('should call undoUseCase and emit ComponentUpdated on undo', () {
+      when(() => mockUndoUseCase.call(any())).thenAnswer((_) async {});
+
+      componentCubit.undo();
+
+      verify(() => mockUndoUseCase.call(mockCentralStack)).called(1);
+      expect(componentCubit.state, isA<ComponentUpdated>());
+    });
+
+    test('should call redoUseCase and emit ComponentUpdated on redo', () {
+      when(() => mockCentralStack.navigateToNext()).thenAnswer((_) async {});
+
+      componentCubit.redo();
+
+      verify(() => mockCentralStack.navigateToNext()).called(1);
+      expect(componentCubit.state, isA<ComponentUpdated>());
     });
   });
 }

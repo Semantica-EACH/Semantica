@@ -4,6 +4,8 @@ import 'package:semantica/features/component/domain/usecases/close_component_use
 import 'package:semantica/features/component/domain/usecases/maximize_component_usecase.dart';
 import 'package:semantica/features/component/domain/usecases/minimize_component_usecase.dart';
 import 'package:semantica/features/component/domain/usecases/open_component_usecase.dart';
+import 'package:semantica/features/component/domain/usecases/redo_usecase.dart';
+import 'package:semantica/features/component/domain/usecases/undo_usecase.dart';
 import 'package:semantica/features/component/presentation/cubit/component_cubit.dart';
 import 'package:semantica/features/component_list/domain/entities/central_stack.dart';
 import 'package:semantica/features/component_list/domain/entities/side_list.dart';
@@ -11,15 +13,21 @@ import 'screens/home_screen.dart';
 
 void main() {
   runApp(
-    BlocProvider(
-      create: (context) => ComponentCubit(
-        maximizeUseCase: MaximizeComponentUseCase(),
-        minimizeUseCase: MinimizeComponentUseCase(),
-        openComponentUseCase: OpenComponentUseCase(),
-        closeUseCase: CloseComponentUseCase(),
-        sideList: SideList(),
-        centralStack: CentralStack(),
-      ),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<ComponentCubit>(
+          create: (context) => ComponentCubit(
+            maximizeUseCase: MaximizeComponentUseCase(),
+            minimizeUseCase: MinimizeComponentUseCase(),
+            openComponentUseCase: OpenComponentUseCase(),
+            closeUseCase: CloseComponentUseCase(),
+            sideList: SideList(),
+            centralStack: CentralStack(),
+            undoUseCase: UndoUseCase(),
+            redoUseCase: RedoUseCase(),
+          ),
+        ),
+      ],
       child: const MyApp(),
     ),
   );

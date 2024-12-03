@@ -10,7 +10,7 @@ void main() {
     final centralStack = CentralStack();
     final useCase = OpenComponentUseCase();
 
-    useCase.call(component: component, centralStack: centralStack);
+    useCase.call(component: component, componentList: centralStack);
 
     expect(centralStack.components.contains(component), true);
   });

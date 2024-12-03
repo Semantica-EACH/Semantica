@@ -4,7 +4,7 @@ import 'package:semantica/features/component_list/domain/entities/component_list
 class OpenComponentUseCase {
   /// Adiciona um novo componente à área central
   void call(
-      {required Component component, required ComponentList centralStack}) {
-    centralStack.addComponent(component);
+      {required Component component, required ComponentList componentList}) {
+    componentList.addComponent(component);
   }
 }
