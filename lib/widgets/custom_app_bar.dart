@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:semantica/features/component/presentation/cubit/component_cubit.dart';
 import 'package:semantica/features/component/presentation/cubit/component_cubit_states.dart';
+import 'package:semantica/screens/configurations.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onToggleSidebar;
@@ -63,17 +64,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             color: isLast ? Colors.grey : null,
             tooltip: isLast ? 'No next component' : 'Redo',
           ),
-/*
-        IconButton(
-          icon: const Icon(Icons.settings),
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Abrir Configurações')),
-            );
-          },
-        ),
-        */
-
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const ConfigurationsModal();
+                },
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.file_open),
             onPressed: onShowPageDialog,
