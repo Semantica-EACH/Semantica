@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:semantica/features/component/presentation/cubit/component_cubit_states.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:semantica/features/component_list/domain/entities/central_stack.dart';
-import 'package:semantica/features/component_list/domain/entities/side_list.dart';
+import 'package:semantica/features/component_collection/domain/entities/central_stack.dart';
+import 'package:semantica/features/component_collection/domain/entities/side_list.dart';
 
 class MockSideList extends Mock implements SideList {}
 
@@ -32,8 +32,7 @@ void main() {
 
     test('ComponentUpdated should handle null centralStack', () {
       final sideList = MockSideList();
-      final state = ComponentUpdated(
-          sideList: sideList, centralStack: MockCentralStack());
+      final state = ComponentUpdated(sideList: sideList, centralStack: null);
 
       expect(state, isA<ComponentState>());
       expect(state.sideList, sideList);

@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:semantica/features/component/domain/entities/component.dart';
-import 'package:semantica/features/component_list/domain/entities/component_list.dart';
+import 'package:semantica/features/component_collection/domain/entities/component_collection.dart';
 
 class MockComponent extends Mock implements Component {}
 
-class TestComponentList extends ComponentList {
+class TestComponentList extends ComponentCollection {
   final List<Component> _components = [];
 
   @override

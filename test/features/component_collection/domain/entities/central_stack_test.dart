@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:semantica/features/component_list/domain/entities/central_stack.dart';
+import 'package:semantica/features/component_collection/domain/entities/central_stack.dart';
 import 'package:semantica/features/component/domain/entities/component.dart';
 
 import '../../../../mocks/component_mock.dart';

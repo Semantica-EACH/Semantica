@@ -7,9 +7,9 @@ import 'package:semantica/features/pages/domain/usecases/get_page_from_byte.dart
 import 'package:semantica/features/pages/domain/usecases/get_page_usecase.dart';
 import 'package:semantica/features/pages/domain/usecases/save_page_usecase.dart';
 import 'package:semantica/features/pages/presentation/widgets/page_widget.dart';
-import 'package:semantica/features/component_list/presentation/widgets/central_area.dart';
+import 'package:semantica/features/component_collection/presentation/widgets/central_area.dart';
 import 'package:semantica/widgets/dialogs/page_dialog.dart';
-import 'package:semantica/features/component_list/presentation/widgets/sidebar.dart';
+import 'package:semantica/features/component_collection/presentation/widgets/sidebar.dart';
 import 'package:semantica/widgets/custom_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {

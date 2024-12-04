@@ -1,7 +1,7 @@
 import 'package:semantica/features/component/domain/entities/component.dart';
-import 'package:semantica/features/component_list/domain/entities/component_list.dart';
+import 'package:semantica/features/component_collection/domain/entities/component_collection.dart';
 
-class CentralStack implements ComponentList {
+class CentralStack implements ComponentCollection {
   final List<Component> _components;
   int _currentIndex = -1;
 

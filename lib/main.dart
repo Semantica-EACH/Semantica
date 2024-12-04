@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:semantica/features/component/domain/usecases/close_component_usecase.dart';
-import 'package:semantica/features/component/domain/usecases/maximize_component_usecase.dart';
-import 'package:semantica/features/component/domain/usecases/minimize_component_usecase.dart';
-import 'package:semantica/features/component/domain/usecases/open_component_usecase.dart';
-import 'package:semantica/features/component/domain/usecases/redo_usecase.dart';
-import 'package:semantica/features/component/domain/usecases/undo_usecase.dart';
+import 'package:semantica/features/component/domain/usecases/component_manager.dart';
+import 'package:semantica/features/component/domain/usecases/history_manager.dart';
 import 'package:semantica/features/component/presentation/cubit/component_cubit.dart';
-import 'package:semantica/features/component_list/domain/entities/central_stack.dart';
-import 'package:semantica/features/component_list/domain/entities/side_list.dart';
+import 'package:semantica/features/component_collection/domain/entities/central_stack.dart';
+import 'package:semantica/features/component_collection/domain/entities/side_list.dart';
 import 'screens/home_screen.dart';
 
 void main() {
@@ -17,14 +13,10 @@ void main() {
       providers: [
         BlocProvider<ComponentCubit>(
           create: (context) => ComponentCubit(
-            maximizeUseCase: MaximizeComponentUseCase(),
-            minimizeUseCase: MinimizeComponentUseCase(),
-            openComponentUseCase: OpenComponentUseCase(),
-            closeUseCase: CloseComponentUseCase(),
             sideList: SideList(),
             centralStack: CentralStack(),
-            undoUseCase: UndoUseCase(),
-            redoUseCase: RedoUseCase(),
+            componentManager: ComponentManager(),
+            historyManager: HistoryManager(),
           ),
         ),
       ],

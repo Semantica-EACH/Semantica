@@ -1,7 +1,7 @@
 import 'package:semantica/features/component/domain/entities/component.dart';
-import 'package:semantica/features/component_list/domain/entities/component_list.dart';
+import 'package:semantica/features/component_collection/domain/entities/component_collection.dart';
 
-class SideList implements ComponentList {
+class SideList implements ComponentCollection {
   List<Component> components;
 
   SideList([List<Component>? initialComponents])

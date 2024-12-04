@@ -34,8 +34,9 @@ class CentralAreaState extends State<CentralArea> {
           listener: (context, state) {
             if (state is ComponentUpdated) {
               setState(() {
-                centralComponent =
-                    state.centralStack.getCurrentComponent()?.toComponentView();
+                centralComponent = state.centralStack
+                    ?.getCurrentComponent()
+                    ?.toComponentView();
               });
             }
           },
