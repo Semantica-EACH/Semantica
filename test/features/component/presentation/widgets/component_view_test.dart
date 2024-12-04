@@ -1,14 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:semantica/features/component/domain/entities/component.dart';
 import 'package:semantica/features/component/presentation/widgets/component_view.dart';
 
 import '../../../../mocks/component_mock.dart';
 
 // ignore: must_be_immutable
 class TestComponentView extends ComponentView {
-  TestComponentView({required Component component})
-      : super(component: component);
+  TestComponentView({super.key, required super.component});
 
   @override
   Widget renderCentralContent(BuildContext context) {
