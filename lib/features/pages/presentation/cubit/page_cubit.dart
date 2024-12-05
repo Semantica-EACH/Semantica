@@ -20,6 +20,11 @@ class PageCubit extends Cubit<PageState> {
     emit(PageViewing()); // Volta ao estado de visualização
   }
 
+  Future<void> savePage(String newContent) async {
+    page.content = newContent; // Atualiza a entidade
+    await savePageContentUseCase.call(page); // Salva o conteúdo
+  }
+
   void returnToViewing() {
     emit(PageViewing()); // Retorna ao modo de visualização sem salvar
   }

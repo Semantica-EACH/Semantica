@@ -29,6 +29,8 @@ class PageWidget extends ComponentView {
     // Listener para alternar entre edição e visualização
     focusNode.addListener(() {
       if (!focusNode.hasFocus && state is PageEditing) {
+        pageCubit.savePage(component.content);
+
         pageCubit.returnToViewing();
       }
     });
@@ -40,37 +42,50 @@ class PageWidget extends ComponentView {
           pageCubit.enterEditMode();
         }
       },
+      onTapDown: (_) {
+        if (pageCubit.state is PageViewing) {
+          focusNode.requestFocus(); // Alterna para o modo de edição
+          pageCubit.enterEditMode();
+        }
+      },
       child: Focus(
         focusNode: focusNode,
         child: Column(
-          crossAxisAlignment:
-              isCentral ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                component.title,
-                style: TextStyle(
-                  fontSize: isCentral ? 24 : 18,
-                  fontWeight: FontWeight.bold,
+            crossAxisAlignment: isCentral
+                ? CrossAxisAlignment.center
+                : CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  component.title,
+                  style: TextStyle(
+                    fontSize: isCentral ? 24 : 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: state is PageEditing
-                  ? MarkdownEditor(
-                      initialContent: component.content,
-                      onContentChanged: (newContent) {
-                        pageCubit.exitEditMode(newContent);
-                      },
-                    )
-                  : MarkdownViewer(
-                      markdownContent: component.content,
-                    ),
-            ),
-          ],
-        ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: BlocBuilder<PageCubit, PageState>(
+                  bloc: pageCubit,
+                  builder: (context, state) {
+                    if (state is PageEditing) {
+                      return MarkdownEditor(
+                        initialContent: component.content,
+                        onContentChanged: (newContent) {
+                          component.content = newContent;
+                        },
+                      );
+                    } else {
+                      return MarkdownViewer(
+                        markdownContent: component.content,
+                      );
+                    }
+                  },
+                ),
+              )
+            ]),
       ),
     );
   }

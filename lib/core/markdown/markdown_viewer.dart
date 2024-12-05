@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:semantica/core/markdown/widgets/local_link_builder.dart';
+import 'package:markdown/markdown.dart' as md;
 
 /// Visualizador de Markdown reutilizável
 class MarkdownViewer extends StatelessWidget {
@@ -16,6 +17,13 @@ class MarkdownViewer extends StatelessWidget {
     return MarkdownBody(
       data: markdownContent,
       styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+      extensionSet: md.ExtensionSet([
+        ...md.ExtensionSet.gitHubFlavored.blockSyntaxes,
+        const md.TableSyntax(),
+      ], [
+        ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
+        md.AutolinkExtensionSyntax(),
+      ]),
       builders: {
         'p': LocalLinkBuilder(context: context),
         'li': LocalLinkBuilder(context: context),
