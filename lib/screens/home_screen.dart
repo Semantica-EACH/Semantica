@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:semantica/features/component/presentation/cubit/component_cubit.dart';
-import 'package:semantica/features/pages/data/page_loader.dart';
-import 'package:semantica/features/pages/data/page_repository_impl.dart';
-import 'package:semantica/features/pages/domain/usecases/get_page_from_byte.dart';
-import 'package:semantica/features/pages/domain/usecases/get_page_usecase.dart';
-import 'package:semantica/features/pages/domain/usecases/save_page_usecase.dart';
-import 'package:semantica/features/pages/presentation/widgets/page_widget.dart';
+import 'package:semantica/features/pages/domain/services/page_open.dart';
 import 'package:semantica/features/component_collection/presentation/widgets/central_area.dart';
 import 'package:semantica/widgets/dialogs/page_dialog.dart';
 import 'package:semantica/features/component_collection/presentation/widgets/sidebar.dart';
@@ -21,11 +14,6 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   bool _isSidebarVisible = true;
-  late final GetPageUseCase _getPageUseCase;
-  late final GetPageFromBytesUseCase _getPageFromBytesUseCase;
-  late final SavePageContentUseCase _savePageContentUseCase;
-
-// Componentes no Sidebar
 
   void _toggleSidebar() {
     setState(() {
@@ -36,34 +24,16 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
-    final pageLoader = PageLoader();
-    final pageRepository = PageRepositoryImpl(pageLoader: pageLoader);
-    _getPageUseCase = GetPageUseCase(repository: pageRepository);
-    _getPageFromBytesUseCase =
-        GetPageFromBytesUseCase(repository: pageRepository);
-    _savePageContentUseCase =
-        SavePageContentUseCase(repository: pageRepository);
   }
 
   void _showPageDialog() {
     showPageDialog(context, onSubmit: (filePathOrName, fileBytes) async {
       try {
-        final page = fileBytes != null
-            ? await _getPageFromBytesUseCase.call(fileBytes, filePathOrName)
-            : await _getPageUseCase.call(filePathOrName);
-
-        final newComponent = PageWidget(
-          component: page,
-          savePageContentUseCase: _savePageContentUseCase,
+        await openPageComponent(
+          context: context,
+          filePathOrName: filePathOrName,
+          fileBytes: fileBytes,
         );
-
-        if (mounted) {
-          context.read<ComponentCubit>().openComponent(page);
-          final centralAreaState =
-              context.findAncestorStateOfType<CentralAreaState>();
-          centralAreaState?.updateComponent(newComponent);
-        }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
