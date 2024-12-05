@@ -1,13 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
 import 'package:semantica/core/utils/preferences_util.dart';
 import 'package:path/path.dart' as path;
-import 'dart:io';
-import 'package:markdown/markdown.dart' as md;
-import 'package:semantica/features/component/presentation/cubit/component_cubit.dart';
-import 'package:provider/provider.dart';
-import 'package:semantica/features/pages/domain/entities/page.dart' as my_page;
+import 'package:semantica/features/pages/domain/services/page_open.dart';
 
 class LocalLinkBuilder extends MarkdownElementBuilder {
   final BuildContext context;
@@ -15,8 +11,8 @@ class LocalLinkBuilder extends MarkdownElementBuilder {
   LocalLinkBuilder({required this.context});
 
   @override
-  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
-    final textContent = element.textContent;
+  Widget? visitText(md.Text text, TextStyle? preferredStyle) {
+    final textContent = text.text;
     final regex = RegExp(r'\[\[(.*?)\]\]');
     final matches = regex.allMatches(textContent);
 
@@ -24,7 +20,12 @@ class LocalLinkBuilder extends MarkdownElementBuilder {
       return Text(textContent, style: preferredStyle);
     }
 
-    final spans = <TextSpan>[];
+    return _buildRichText(textContent, matches, preferredStyle);
+  }
+
+  RichText _buildRichText(String textContent, Iterable<RegExpMatch> matches,
+      TextStyle? preferredStyle) {
+    final spans = <InlineSpan>[];
     int lastMatchEnd = 0;
 
     for (final match in matches) {
@@ -34,41 +35,7 @@ class LocalLinkBuilder extends MarkdownElementBuilder {
       }
 
       final matchedText = match.group(1);
-      spans.add(
-        TextSpan(
-          text: '[$matchedText]',
-          style: TextStyle(
-              color: Colors.blue, decoration: TextDecoration.underline),
-          recognizer: TapGestureRecognizer()
-            ..onTap = () async {
-              final repositoryPath =
-                  await PreferencesUtil.getString('repository');
-              if (repositoryPath != null) {
-                final filePath = path.join(repositoryPath, matchedText);
-                if (await File(filePath).exists()) {
-                  final page = my_page.Page(
-                    path: filePath,
-                    title: matchedText!,
-                    timestamp: DateTime.now(),
-                    metadata: [],
-                    content: await File(filePath).readAsString(),
-                  );
-                  if (context.mounted) {
-                    final componentCubit = context.read<ComponentCubit>();
-                    componentCubit.openComponent(page);
-                  }
-                } else {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text('Arquivo não encontrado: $filePath')),
-                    );
-                  }
-                }
-              }
-            },
-        ),
-      );
+      spans.add(_buildClickableSpan(matchedText, preferredStyle));
 
       lastMatchEnd = match.end;
     }
@@ -78,5 +45,37 @@ class LocalLinkBuilder extends MarkdownElementBuilder {
     }
 
     return RichText(text: TextSpan(children: spans, style: preferredStyle));
+  }
+
+  WidgetSpan _buildClickableSpan(
+      String? matchedText, TextStyle? preferredStyle) {
+    return WidgetSpan(
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => _openPage(matchedText),
+          child: Text(
+            matchedText!,
+            style: preferredStyle?.copyWith(color: Colors.blue),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openPage(String? matchedText) async {
+    final repositoryPath = await PreferencesUtil.getString('repository');
+    if (repositoryPath != null) {
+      final filePath = path.join(repositoryPath, '${matchedText!}.md');
+      if (context.mounted) {
+        await openPageComponent(
+          context: context,
+          filePathOrName: filePath,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Caminho completo: $filePath')),
+        );
+      }
+    }
   }
 }

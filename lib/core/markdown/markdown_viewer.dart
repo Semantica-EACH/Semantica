@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:semantica/core/markdown/widgets/todo_element_builder.dart';
+import 'package:semantica/core/markdown/widgets/local_link_builder.dart';
 
 /// Visualizador de Markdown reutilizável
 class MarkdownViewer extends StatelessWidget {
@@ -17,16 +17,16 @@ class MarkdownViewer extends StatelessWidget {
       data: markdownContent,
       styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
       builders: {
-        'p': TodoElementBuilder(context: context),
-        'li': TodoElementBuilder(context: context),
-        'ol': TodoElementBuilder(context: context),
-        'ul': TodoElementBuilder(context: context),
-        'h1': TodoElementBuilder(context: context),
-        'h2': TodoElementBuilder(context: context),
-        'h3': TodoElementBuilder(context: context),
-        'h4': TodoElementBuilder(context: context),
-        'h5': TodoElementBuilder(context: context),
-        'h6': TodoElementBuilder(context: context),
+        'p': LocalLinkBuilder(context: context),
+        'li': LocalLinkBuilder(context: context),
+        'ol': LocalLinkBuilder(context: context),
+        'ul': LocalLinkBuilder(context: context),
+        'h1': LocalLinkBuilder(context: context),
+        'h2': LocalLinkBuilder(context: context),
+        'h3': LocalLinkBuilder(context: context),
+        'h4': LocalLinkBuilder(context: context),
+        'h5': LocalLinkBuilder(context: context),
+        'h6': LocalLinkBuilder(context: context),
       },
     );
   }
