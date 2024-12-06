@@ -28,6 +28,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
       text: widget.initialContent,
       language: markdown,
     );
+
     _codeController.addListener(() {
       widget.onContentChanged(_codeController.text);
     });
@@ -47,17 +48,12 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
 
     return CodeTheme(
       data: CodeThemeData(styles: theme),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.text,
-        child: CodeField(
-          controller: _codeController,
-          maxLines: null,
-          decoration: const BoxDecoration(
-            border: Border.fromBorderSide(BorderSide()),
-          ),
-          onChanged: widget.onContentChanged,
-          textStyle: const TextStyle(fontFamily: 'SourceCodePro'),
-        ),
+      child: CodeField(
+        lineNumbers: false,
+        controller: _codeController,
+        maxLines: null,
+        onChanged: widget.onContentChanged,
+        textStyle: const TextStyle(fontFamily: 'SourceCodePro'),
       ),
     );
   }

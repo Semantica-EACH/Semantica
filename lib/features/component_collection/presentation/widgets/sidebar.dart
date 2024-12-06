@@ -29,6 +29,7 @@ class _SidebarState extends State<Sidebar> {
                 return Column(
                   children: [
                     ListTile(
+                      leading: Icon(component.icon),
                       title: Text(component.title),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
