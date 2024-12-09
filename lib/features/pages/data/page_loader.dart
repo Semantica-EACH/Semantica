@@ -37,6 +37,7 @@ class PageLoader {
         content: content,
       );
     } catch (e) {
+      // preciso aqui lidar com arquivos que não existem
       throw Exception('Erro ao carregar o arquivo: $e');
     }
   }

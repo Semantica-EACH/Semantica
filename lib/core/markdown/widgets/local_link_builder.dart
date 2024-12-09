@@ -19,7 +19,6 @@ class LocalLinkBuilder extends MarkdownElementBuilder {
     if (matches.isEmpty) {
       return Text(textContent, style: preferredStyle);
     }
-
     return _buildRichText(textContent, matches, preferredStyle);
   }
 
@@ -43,7 +42,6 @@ class LocalLinkBuilder extends MarkdownElementBuilder {
     if (lastMatchEnd < textContent.length) {
       spans.add(TextSpan(text: textContent.substring(lastMatchEnd)));
     }
-
     return RichText(text: TextSpan(children: spans, style: preferredStyle));
   }
 
