@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:semantica/features/block/domain/entities/block.dart';
 import 'package:semantica/features/pages/domain/entities/page.dart';
 
 void main() {
@@ -9,28 +10,30 @@ void main() {
     final fileTimestamp = DateTime(2023, 1, 1);
 
     test('should correctly initialize with given values', () {
+      final blockContent = Block.fromMarkdown(fileContent);
       final page = Page(
         path: filePath,
         title: fileTitle,
         timestamp: fileTimestamp,
         metadata: ['Tag1', 'Tag2'],
-        content: fileContent,
+        content: blockContent,
       );
 
       expect(page.path, equals(filePath));
       expect(page.title, equals(fileTitle));
       expect(page.timestamp, equals(fileTimestamp));
       expect(page.metadata, equals(['Tag1', 'Tag2']));
-      expect(page.content, equals(fileContent));
+      expect(page.content, equals(blockContent));
     });
 
     test('should allow updating title and content', () {
+      final blockContent = Block.fromMarkdown(fileContent);
       final page = Page(
         path: filePath,
         title: fileTitle,
         timestamp: fileTimestamp,
         metadata: ['Tag1'],
-        content: fileContent,
+        content: blockContent,
       );
 
       // Atualiza o título
@@ -40,8 +43,9 @@ void main() {
 
       // Atualiza o conteúdo
       const updatedContent = '# Updated Content';
-      page.content = updatedContent;
-      expect(page.content, equals(updatedContent));
+      final updatedBlockContent = Block.fromMarkdown(updatedContent);
+      page.content = updatedBlockContent;
+      expect(page.content, equals(updatedBlockContent));
     });
 
     test('should allow modifying metadata', () {
@@ -50,7 +54,7 @@ void main() {
         title: fileTitle,
         timestamp: fileTimestamp,
         metadata: ['Tag1'],
-        content: fileContent,
+        content: Block.root(fileContent),
       );
 
       // Adiciona um novo metadado
@@ -68,7 +72,7 @@ void main() {
         title: fileTitle,
         timestamp: fileTimestamp,
         metadata: [],
-        content: fileContent,
+        content: Block.root(fileContent),
       );
 
       // Verifica que o valor do path permanece o mesmo

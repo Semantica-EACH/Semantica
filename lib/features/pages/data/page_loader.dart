@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart' as p;
+import 'package:semantica/features/block/domain/entities/block.dart';
 import 'package:semantica/features/pages/domain/entities/page.dart';
 
 typedef FileFactory = File Function(String path);
@@ -34,7 +35,7 @@ class PageLoader {
         title: title,
         timestamp: timestamp,
         metadata: [],
-        content: content,
+        content: Block.root(content),
       );
     } catch (e) {
       // preciso aqui lidar com arquivos que não existem

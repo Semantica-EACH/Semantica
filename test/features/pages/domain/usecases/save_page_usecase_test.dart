@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:semantica/features/block/domain/entities/block.dart';
 import 'package:semantica/features/pages/domain/entities/page.dart';
 import 'package:semantica/features/pages/domain/repository/page_repository.dart';
 import 'package:semantica/features/pages/domain/usecases/save_page_usecase.dart';
@@ -22,7 +23,7 @@ void main() {
     final testPage = Page(
       path: filePath,
       title: 'Test Page',
-      content: fileContent,
+      content: Block.root(fileContent),
       timestamp: DateTime(2023, 1, 1),
       metadata: [],
     );

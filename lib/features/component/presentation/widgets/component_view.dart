@@ -18,8 +18,12 @@ abstract class ComponentView extends StatelessWidget {
   }
 
   /// Método para renderizar o conteúdo específico no `renderCentral`
-  Widget renderCentralContent(BuildContext context);
+  Widget renderCentralContent(BuildContext context) {
+    return this;
+  }
 
   /// Método para renderizar o conteúdo específico no `renderSidebar`
-  Widget renderSidebarContent(BuildContext context);
+  Widget renderSidebarContent(BuildContext context) {
+    return this;
+  }
 }

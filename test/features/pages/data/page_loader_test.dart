@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:semantica/features/block/domain/entities/block.dart';
 import 'package:semantica/features/pages/data/page_loader.dart';
 import 'package:semantica/features/pages/domain/entities/page.dart';
 
@@ -38,9 +39,9 @@ void main() {
       expect(result.path, path);
       expect(result.title, title);
       expect(result.timestamp, timestamp);
-      expect(result.content, content);
+      expect(result.content.toMarkdown(),
+          equals(Block.fromMarkdown(content).toMarkdown()));
     });
-
     test('deve lançar uma exceção se o arquivo não existir', () async {
       // Arrange
       const path = '/test/nonexistent.md';

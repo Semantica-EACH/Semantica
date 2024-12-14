@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:semantica/features/block/domain/entities/block.dart';
 import 'package:semantica/features/component/domain/entities/component.dart';
 import 'package:semantica/features/component/presentation/widgets/component_view.dart';
-import 'package:semantica/features/pages/data/page_loader.dart';
-import 'package:semantica/features/pages/data/page_repository_impl.dart';
-import 'package:semantica/features/pages/domain/usecases/save_page_usecase.dart';
 import 'package:semantica/features/pages/presentation/widgets/page_widget.dart';
 
 class Page extends Component {
@@ -12,7 +10,7 @@ class Page extends Component {
   String title;
   final DateTime timestamp;
   final List<String> metadata;
-  String content;
+  Block content;
 
   Page({
     required this.path,
@@ -22,16 +20,12 @@ class Page extends Component {
     required this.content,
   }) : super(
           title: title,
-          icon: Icons.note, // Adiciona o ícone de anotação
+          icon: Icons.note,
         );
 
   @override
   ComponentView toComponentView() {
-    return PageWidget(
-      component: this,
-      savePageContentUseCase: SavePageContentUseCase(
-          repository: PageRepositoryImpl(pageLoader: PageLoader())),
-    );
+    return PageWidget(component: this);
   }
 
   @override

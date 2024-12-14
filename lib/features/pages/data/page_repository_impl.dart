@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:semantica/features/block/domain/entities/block.dart';
 import 'package:semantica/features/pages/data/page_loader.dart';
 import 'package:semantica/features/pages/domain/entities/page.dart';
 import 'package:semantica/features/pages/domain/repository/page_repository.dart';
@@ -16,7 +17,7 @@ class PageRepositoryImpl implements PageRepository {
     final file = File(page.path);
 
     try {
-      await file.writeAsString(page.content); // Salva o conteúdo no arquivo
+      await file.writeAsString(page.content.toMarkdown());
     } catch (e) {
       throw Exception('Erro ao salvar o conteúdo: $e');
     }
@@ -45,7 +46,7 @@ class PageRepositoryImpl implements PageRepository {
         title: title,
         timestamp: timestamp,
         metadata: metadata,
-        content: content,
+        content: Block.fromMarkdown(content),
       );
     } catch (e) {
       throw Exception("Erro ao processar bytes do arquivo: $e");

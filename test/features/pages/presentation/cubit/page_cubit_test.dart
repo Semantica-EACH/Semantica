@@ -1,83 +1,57 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:semantica/features/pages/domain/entities/page.dart';
+import 'package:semantica/features/block/domain/entities/block.dart';
+import 'package:semantica/features/pages/domain/entities/page.dart' as my_page;
 import 'package:semantica/features/pages/domain/usecases/save_page_usecase.dart';
 import 'package:semantica/features/pages/presentation/cubit/page_cubit.dart';
-import 'package:semantica/features/pages/presentation/cubit/page_cubit_states.dart';
 
 class MockSavePageContentUseCase extends Mock
     implements SavePageContentUseCase {}
 
-class FakePage extends Fake implements Page {}
+class MockPage extends Mock implements my_page.Page {}
+
+class MockBuildContext extends Mock implements BuildContext {}
 
 void main() {
   late PageCubit pageCubit;
   late MockSavePageContentUseCase mockSavePageContentUseCase;
-  late Page testPage;
+  late MockPage mockPage;
+  late MockBuildContext mockBuildContext;
 
   setUpAll(() {
-    registerFallbackValue(FakePage());
+    registerFallbackValue(MockPage());
   });
 
   setUp(() {
+    mockBuildContext = MockBuildContext();
     mockSavePageContentUseCase = MockSavePageContentUseCase();
-    testPage = Page(
-      path: 'test.md',
-      title: 'Test Page',
-      content: '# Test Content',
-      timestamp: DateTime.now(),
-      metadata: [],
-    );
+    mockPage = MockPage();
+    when(() => mockPage.path).thenReturn('test.md');
+    when(() => mockPage.title).thenReturn('Test Page');
+    when(() => mockPage.content)
+        .thenReturn(Block.fromMarkdown('# Test Content'));
+    when(() => mockPage.timestamp).thenReturn(DateTime.now());
+    when(() => mockPage.metadata).thenReturn([]);
+    when(() => mockSavePageContentUseCase.call(any()))
+        .thenAnswer((_) async => {});
+
     pageCubit = PageCubit(
-      page: testPage,
+      mockBuildContext,
+      page: mockPage,
       savePageContentUseCase: mockSavePageContentUseCase,
     );
   });
 
   group('PageCubit', () {
-    test('initial state is PageViewing', () {
-      expect(pageCubit.state, isA<PageViewing>());
-    });
-
-    blocTest<PageCubit, PageState>(
-      'emits [PageEditing] when enterEditMode is called',
+    blocTest<PageCubit, void>(
+      'calls savePageContentUseCase when savePage is called',
       build: () => pageCubit,
-      act: (cubit) => cubit.enterEditMode(),
-      expect: () => [isA<PageEditing>()],
-    );
-
-    blocTest<PageCubit, PageState>(
-      'emits [PageViewing] after exitEditMode is called',
-      build: () => pageCubit,
-      setUp: () {
-        when(() => mockSavePageContentUseCase.call(any()))
-            .thenAnswer((_) async {});
-      },
-      act: (cubit) => cubit.exitEditMode('# Updated Content'),
+      act: (cubit) => cubit.savePage(mockPage.content.toMarkdown()),
       verify: (_) {
-        expect(testPage.content, equals('# Updated Content'));
-        verify(() => mockSavePageContentUseCase.call(testPage)).called(1);
+        verify(() => mockSavePageContentUseCase(any())).called(1);
       },
-      expect: () => [isA<PageViewing>()],
-    );
-
-    blocTest<PageCubit, PageState>(
-      'emits [PageViewing] when returnToViewing is called',
-      build: () => pageCubit,
-      act: (cubit) => cubit.returnToViewing(),
-      expect: () => [isA<PageViewing>()],
-    );
-
-    blocTest<PageCubit, PageState>(
-      'throws an exception when savePageContentUseCase fails during exitEditMode',
-      build: () => pageCubit,
-      setUp: () {
-        when(() => mockSavePageContentUseCase.call(any()))
-            .thenThrow(Exception('Erro ao salvar a página'));
-      },
-      act: (cubit) => cubit.exitEditMode('# Updated Content'),
-      errors: () => [isA<Exception>()],
     );
   });
 }

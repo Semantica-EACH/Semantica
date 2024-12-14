@@ -6,11 +6,13 @@ import 'package:semantica/core/markdown/markdown_viewer.dart';
 void main() {
   group('MarkdownViewer', () {
     testWidgets('renders provided markdown content', (tester) async {
-      const markdownContent = '# Test Header\nThis is a test paragraph.';
+      const markdownContent = '# Test Header\n\nThis is a test paragraph.';
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: MarkdownViewer(markdownContent: markdownContent),
+          home: Scaffold(
+            body: MarkdownViewer(markdownContent: markdownContent),
+          ),
         ),
       );
 

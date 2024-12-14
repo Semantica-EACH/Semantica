@@ -1,5 +1,8 @@
 import 'package:markdown/markdown.dart' as md;
-import '../enums/tag.dart';
+import 'package:semantica/features/block/domain/enums/tag.dart';
+import 'package:semantica/features/block/domain/services/from_markdown.dart';
+import 'package:semantica/features/block/domain/services/to_markdown.dart'
+    as to_md;
 
 class Block {
   Tag tag;
@@ -9,79 +12,44 @@ class Block {
   Block({required this.tag, this.header, List<Block>? children})
       : children = children ?? [];
 
-  Block.fromMarkdown(String markdown)
+  Block.root(String? markdown)
       : tag = Tag.root,
         header = null,
-        children =
-            _buildHierarchy(md.Document().parseLines(markdown.split('\n')));
+        children = markdown != null ? fromMarkdown(markdown) : [];
 
-  static List<Block> _buildHierarchy(List<md.Node> nodes) {
-    Block root = Block(tag: Tag.root, children: []);
-    List<Block> stack = [root]; // Pilha para gerenciar a hierarquia de blocos
-
-    for (var node in nodes) {
-      if (node is md.Element) {
-        String tagStr = node.tag;
-        Tag tag =
-            TagExtension.fromString(tagStr); // Convertendo String para Tag
-
-        // Captura o conteúdo como um md.Text ou null
-        md.Text? headerText;
-        if (node.children!.isNotEmpty && node.children!.first is md.Text) {
-          headerText = node.children!.first as md.Text;
-        }
-
-        if (tag.name.startsWith('h')) {
-          // Processar cabeçalhos (h1, h2, etc.)
-          int level = int.parse(tag.name.substring(1));
-
-          // Encontrar o pai adequado na pilha
-          while (stack.length > level) {
-            stack.removeLast();
-          }
-
-          // Criar um novo bloco e adicioná-lo ao pai atual
-          Block headerBlock = Block(tag: tag, header: headerText);
-          stack.last.children.add(headerBlock);
-
-          // Adicionar o novo bloco à pilha
-          stack.add(headerBlock);
-        } else if (tag == Tag.p) {
-          // Processar parágrafos
-          Block paragraphBlock = Block(tag: tag, header: headerText);
-          stack.last.children.add(paragraphBlock);
-        } else if (tag == Tag.ul || tag == Tag.ol) {
-          // Processar listas
-          _processListItems(node, stack, tag);
-        } else if (node is md.Text) {
-          // Processar texto fora de elementos
-          Block textBlock = Block(tag: Tag.p, header: node as md.Text);
-          stack.last.children.add(textBlock);
-        }
-      }
+  Block.fromMarkdown(String markdown)
+      : tag = Tag.root,
+        children = [] {
+    List<Block> parsedBlocks = fromMarkdown(markdown);
+    if (parsedBlocks.length > 1) {
+      throw Exception('Mais de uma raiz encontrada no Markdown.');
+    } else if (parsedBlocks.isEmpty) {
+      throw Exception('Nenhuma raiz encontrada no Markdown.');
+    } else {
+      Block root = parsedBlocks.first;
+      tag = root.tag;
+      header = root.header;
+      children = root.children;
     }
-
-    return root.children;
   }
 
-  static void _processListItems(md.Element node, List<Block> stack, Tag tag) {
-    for (var child in node.children!) {
-      if (child is md.Element && child.tag == 'li') {
-        Block listItemBlock = Block(
-            tag: tag,
-            header: child.children!.isNotEmpty
-                ? child.children?.first as md.Text
-                : null);
-        stack.last.children.add(listItemBlock);
-      }
-    }
+  String toMarkdown() {
+    StringBuffer buffer = StringBuffer();
+    to_md.toMarkdown(buffer, this);
+    return buffer.toString();
   }
 
   @override
   String toString() {
-    String headerContent = header?.textContent ?? '';
-    String childrenString =
-        children.map((child) => child.toString()).join('\n  ');
-    return 'Block(\n  Tag: ${tag.name}\n  Header: "$headerContent"${children.isNotEmpty ? '\n  ' + childrenString : ''})';
+    return _toStringHelper(0);
+  }
+
+  /// Método auxiliar para gerar a string com indentação.
+  String _toStringHelper(int indentLevel) {
+    final indent = '  ' * indentLevel;
+    final childrenStr = children.isNotEmpty
+        ? '\n${children.map((child) => child._toStringHelper(indentLevel + 1)).join('\n')}'
+        : '';
+    return '$indent- tag: $tag\n$indent  header: ${header!.text}${childrenStr.isNotEmpty ? '\n$indent  children:' + childrenStr : ''}';
   }
 }

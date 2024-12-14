@@ -8,7 +8,6 @@ import 'package:semantica/features/pages/data/page_loader.dart';
 import 'package:semantica/features/pages/data/page_repository_impl.dart';
 import 'package:semantica/features/pages/domain/usecases/get_page_from_byte.dart';
 import 'package:semantica/features/pages/domain/usecases/get_page_usecase.dart';
-import 'package:semantica/features/pages/domain/usecases/save_page_usecase.dart';
 import 'package:semantica/features/pages/presentation/widgets/page_widget.dart';
 
 Future<void> openPageComponent({
@@ -21,17 +20,12 @@ Future<void> openPageComponent({
   var getPageUseCase = GetPageUseCase(repository: pageRepository);
   var getPageFromBytesUseCase =
       GetPageFromBytesUseCase(repository: pageRepository);
-  var savePageContentUseCase =
-      SavePageContentUseCase(repository: pageRepository);
 
   final page = fileBytes != null
       ? await getPageFromBytesUseCase.call(fileBytes, filePathOrName)
       : await getPageUseCase.call(filePathOrName);
 
-  final newComponent = PageWidget(
-    component: page,
-    savePageContentUseCase: savePageContentUseCase,
-  );
+  final newComponent = PageWidget(component: page);
 
   if (context.mounted) {
     context.read<ComponentCubit>().openComponent(page);
