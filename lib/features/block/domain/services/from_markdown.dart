@@ -43,7 +43,7 @@ List<Block> _buildHierarchy(List<md.Node> nodes) {
         stack.last.children.add(paragraphBlock);
       } else if (tag == Tag.ul || tag == Tag.ol) {
         // Processar listas
-        stack.last.children.addAll(processList(node.children!, tag));
+        stack.last.children.addAll(_processList(node.children!, tag));
       } else if (node is md.Text) {
         // Processar texto fora de elementos
         Block textBlock = Block(tag: Tag.p, header: node as md.Text);
@@ -56,38 +56,45 @@ List<Block> _buildHierarchy(List<md.Node> nodes) {
 }
 
 /// Processa itens de lista recursivamente
-List<Block> processList(List<md.Node> items, Tag tag) {
+List<Block> _processList(List<md.Node> items, Tag tag) {
   final result = <Block>[];
 
   for (var item in items) {
     if (item is md.Element && item.tag == 'li') {
-      processListItem(item, result, tag);
+      _processListItem(item, result, tag);
     }
   }
   return result;
 }
 
 /// Processa um único item de lista (<li>) e o converte em um bloco.
-void processListItem(md.Element item, List<Block> result, Tag tag) {
+void _processListItem(md.Element item, List<Block> result, Tag tag) {
   // Obtém o texto do item ignorando sublistas
-  final md.Text itemText =
-      item.children?.whereType<md.Text>().firstOrNull ?? md.Text('');
+  final md.Text itemText = _findFirstTextElement(item);
 
   // Verifica se há sublistas (<ul> ou <ol>)
-  final md.Element? sublist = item.children
-      ?.where((child) =>
-          child is md.Element && (child.tag == 'ul' || child.tag == 'ol'))
-      .firstOrNull as md.Element?;
+  final md.Element? sublist = _findSublistElement(item);
 
-  List<md.Node> children = sublist?.children ?? [];
   Tag? childrenTag =
       sublist != null ? TagExtension.fromString(sublist.tag) : null;
+
+  List<Block> children = sublist != null && sublist.children!.isNotEmpty
+      ? _processList(sublist.children!, childrenTag!)
+      : [];
 
   result.add(
     Block(
       tag: tag,
       header: itemText,
-      children: children.isNotEmpty ? processList(children, childrenTag!) : [],
+      children: children,
     ),
   );
 }
+
+md.Text _findFirstTextElement(md.Element item) =>
+    item.children?.whereType<md.Text>().firstOrNull ?? md.Text('');
+
+md.Element? _findSublistElement(md.Element item) => item.children
+    ?.where((child) =>
+        child is md.Element && (child.tag == 'ul' || child.tag == 'ol'))
+    .firstOrNull as md.Element?;

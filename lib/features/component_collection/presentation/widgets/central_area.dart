@@ -60,7 +60,10 @@ class CentralAreaState extends State<CentralArea> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(),
+              Text(
+                component.component.title,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               Row(
                 children: [
                   IconButton(
@@ -86,7 +89,16 @@ class CentralAreaState extends State<CentralArea> {
           ),
         ),
         Expanded(
-          child: component.renderCentralContent(context),
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
+              ),
+              child: IntrinsicHeight(
+                child: component.renderCentralContent(context),
+              ),
+            ),
+          ),
         ),
       ],
     );

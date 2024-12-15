@@ -10,6 +10,7 @@ import 'package:semantica/features/pages/presentation/cubit/page_cubit.dart';
 
 // ignore: must_be_immutable
 class PageWidget extends ComponentView {
+  @override
   final my_page.Page component;
 
   PageWidget({super.key, required this.component})
@@ -29,9 +30,6 @@ class PageWidget extends ComponentView {
         savePageContentUseCase: savePageContentUseCase,
       ),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(component.title),
-        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

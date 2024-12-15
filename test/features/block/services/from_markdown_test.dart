@@ -75,4 +75,35 @@ void main() {
       expect(blocks[1].header!.text, 'Item 2');
     });
   });
+
+  test('should parse headers and lists correctly', () {
+    String markdown =
+        '# Header 1\n\n- Item 1\n\t- Subitem 1.1\n\t- Subitem 1.2\n\n## Header 2\n\n1. Item 1\n2. Item 2';
+    List<Block> blocks = fromMarkdown(markdown);
+
+    // Verifica o primeiro cabeçalho
+    expect(blocks[0].tag, Tag.h1);
+    expect(blocks[0].header!.text, 'Header 1');
+    expect(blocks[0].children.length, 2);
+
+    // Verifica a lista não ordenada
+    expect(blocks[0].children[0].tag, Tag.ul);
+    expect(blocks[0].children[0].header!.text, 'Item 1');
+    print(blocks[0]);
+//    expect(blocks[0].children[0].children.length, 2);
+//    expect(blocks[1].children[0].children[0].tag, Tag.ul);
+//    expect(blocks[1].children[0].children[0].header!.text, 'Subitem 1.1');
+//    expect(blocks[1].children[0].children[1].tag, Tag.ul);
+//    expect(blocks[1].children[0].children[1].header!.text, 'Subitem 1.2');
+
+    // Verifica o segundo cabeçalho
+    expect(blocks[0].children[1].tag, Tag.h2);
+    expect(blocks[0].children[1].header!.text, 'Header 2');
+
+    // Verifica a lista ordenada
+    expect(blocks[0].children[1].children[0].tag, Tag.ol);
+    expect(blocks[0].children[1].children[0].header!.text, 'Item 1');
+    expect(blocks[0].children[1].children[1].tag, Tag.ol);
+    expect(blocks[0].children[1].children[1].header!.text, 'Item 2');
+  });
 }

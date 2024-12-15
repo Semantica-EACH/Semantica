@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:semantica/core/markdown/widgets/expandable_list_builder.dart';
+import 'package:semantica/core/markdown/widgets/local_link_builder.dart';
 
 class MarkdownViewer extends StatefulWidget {
   final String markdownContent;
@@ -18,42 +18,17 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
   @override
   Widget build(BuildContext context) {
     return MarkdownBody(
-      data: widget.markdownContent,
-      styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-      builders: {
-        'li': ExpandableListBuilder(
-          context: context,
-          tag: 'li',
-        ),
-        'h1': ExpandableListBuilder(
-          context: context,
-          tag: 'h1',
-        ),
-        'h2': ExpandableListBuilder(
-          context: context,
-          tag: 'h2',
-        ),
-        'h3': ExpandableListBuilder(
-          context: context,
-          tag: 'h3',
-        ),
-        'h4': ExpandableListBuilder(
-          context: context,
-          tag: 'h4',
-        ),
-        'h5': ExpandableListBuilder(
-          context: context,
-          tag: 'h5',
-        ),
-        'h6': ExpandableListBuilder(
-          context: context,
-          tag: 'h6',
-        ),
-        'p': ExpandableListBuilder(
-          context: context,
-          tag: 'p',
-        ),
-      },
-    );
+        data: widget.markdownContent,
+        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+        builders: {
+          'p': LocalLinkBuilder(context: context),
+          'li': LocalLinkBuilder(context: context),
+          'h1': LocalLinkBuilder(context: context),
+          'h2': LocalLinkBuilder(context: context),
+          'h3': LocalLinkBuilder(context: context),
+          'h4': LocalLinkBuilder(context: context),
+          'h5': LocalLinkBuilder(context: context),
+          'h6': LocalLinkBuilder(context: context),
+        });
   }
 }
