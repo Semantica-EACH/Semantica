@@ -66,7 +66,11 @@ class _SidebarState extends State<Sidebar> {
                         ],
                       ),
                     ),
-                    if (isExpanded) componentView.renderSidebarContent(context),
+                    if (isExpanded)
+                      Container(
+                        constraints: BoxConstraints(maxHeight: 300),
+                        child: componentView.renderSidebarContent(context),
+                      ),
                   ],
                 );
               }).toList(),
