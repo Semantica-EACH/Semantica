@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:semantica/features/component/presentation/cubit/component_cubit.dart';
 import 'package:semantica/features/component/presentation/cubit/component_cubit_states.dart';
 import 'package:semantica/features/component/presentation/widgets/component_view.dart';
+import 'package:semantica/features/pages/domain/entities/page.dart' as my_page;
 
 class CentralArea extends StatefulWidget {
   const CentralArea({super.key});
@@ -40,15 +41,28 @@ class CentralAreaState extends State<CentralArea> {
               });
             }
           },
-          child: Container(
-            color: Theme.of(context).colorScheme.primary,
-            child: centralComponent == null
-                ? Container()
-                : _renderComponent(context, centralComponent!),
+          child: Scaffold(
+            body: Container(
+              color: Theme.of(context).colorScheme.primary,
+              child: centralComponent == null
+                  ? Container()
+                  : _renderComponent(context, centralComponent!),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: _createNewPage,
+              shape: CircleBorder(),
+              child: Icon(Icons.add),
+            ),
           ),
         );
       },
     );
+  }
+
+  void _createNewPage() {
+    final newPage = my_page.Page();
+
+    context.read<ComponentCubit>().openComponent(newPage);
   }
 
   Widget _renderComponent(BuildContext context, ComponentView component) {

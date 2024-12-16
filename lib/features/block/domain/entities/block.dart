@@ -12,7 +12,7 @@ class Block {
   Block({required this.tag, this.header, List<Block>? children})
       : children = children ?? [];
 
-  Block.root(String? markdown)
+  Block.root({String? markdown})
       : tag = Tag.root,
         header = null,
         children = markdown != null ? fromMarkdown(markdown) : [];

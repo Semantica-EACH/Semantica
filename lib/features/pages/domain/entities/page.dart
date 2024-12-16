@@ -4,6 +4,7 @@ import 'package:semantica/features/component/domain/entities/component.dart';
 import 'package:semantica/features/component/presentation/widgets/component_view.dart';
 import 'package:semantica/features/pages/presentation/widgets/page_widget.dart';
 import 'package:uuid/uuid.dart';
+import 'package:path/path.dart' as p;
 
 class Page extends Component {
   final String id;
@@ -16,14 +17,19 @@ class Page extends Component {
 
   Page({
     String? id,
-    required this.path,
-    required this.title,
-    required this.timestamp,
-    required this.metadata,
-    required this.content,
+    String? path,
+    String? title,
+    DateTime? timestamp,
+    List<String>? metadata,
+    Block? content,
   })  : id = id ?? '_${Uuid().v4()}',
+        path = path ?? '$id.md',
+        title = title ?? (path != null ? p.basenameWithoutExtension(path) : ''),
+        timestamp = timestamp ?? DateTime.now(),
+        content = content ?? Block.root(),
+        metadata = [],
         super(
-          title: title,
+          title: title ?? '',
           icon: Icons.note,
         );
 
