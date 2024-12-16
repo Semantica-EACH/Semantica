@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:semantica/features/block/domain/entities/block.dart';
+import 'package:semantica/features/block/domain/enums/tag.dart';
 import 'package:semantica/features/pages/domain/entities/page.dart';
 
 typedef FileFactory = File Function(String path);
@@ -17,7 +18,17 @@ class PageLoader {
 
       // Verifica se o arquivo existe
       if (!await file.exists()) {
-        throw Exception('Arquivo não encontrado: $path');
+        // Define o título com base no nome do arquivo sem a extensão
+        final title = path.isNotEmpty ? p.basenameWithoutExtension(path) : '';
+
+        // Cria uma nova página se o arquivo não for encontrado
+        return Page(
+          path: path,
+          title: title,
+          timestamp: DateTime.now(),
+          metadata: [],
+          content: Block(tag: Tag.root, children: []),
+        );
       }
 
       // Lê o conteúdo do arquivo
