@@ -28,4 +28,27 @@ extension TagExtension on Tag {
         throw ArgumentError('Tag desconhecido: $tag');
     }
   }
+
+  // Método para verificar se a tag é um cabeçalho
+  bool isHeader() {
+    return this == Tag.h1 ||
+        this == Tag.h2 ||
+        this == Tag.h3 ||
+        this == Tag.h4 ||
+        this == Tag.h5 ||
+        this == Tag.h6;
+  }
+
+  // Método para retornar o nível do cabeçalho
+  int? headerLevel() {
+    if (isHeader()) {
+      return int.parse(toString().substring(5));
+    }
+    return null;
+  }
+
+  // Método para verificar se a tag é um item de lista
+  bool isListItem() {
+    return this == Tag.li || this == Tag.ul || this == Tag.ol;
+  }
 }

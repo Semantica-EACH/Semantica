@@ -48,12 +48,18 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
 
     return CodeTheme(
       data: CodeThemeData(styles: theme),
-      child: CodeField(
-        lineNumbers: false,
-        controller: _codeController,
-        maxLines: null,
-        onChanged: widget.onContentChanged,
-        textStyle: const TextStyle(fontFamily: 'SourceCodePro'),
+      child: Container(
+        constraints: BoxConstraints(
+          minHeight: 50,
+          maxHeight: MediaQuery.of(context).size.height,
+        ),
+        child: CodeField(
+          lineNumbers: false,
+          controller: _codeController,
+          maxLines: null,
+          onChanged: widget.onContentChanged,
+          textStyle: const TextStyle(fontFamily: 'SourceCodePro'),
+        ),
       ),
     );
   }

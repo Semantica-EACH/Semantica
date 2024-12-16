@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:flutter_markdown/flutter_markdown.dart';
-// import 'package:highlight/languages/d.dart';
 import 'package:semantica/core/markdown/markdown_viewer.dart';
-//import 'package:semantica/core/markdown/markdown_editor.dart';
-//import 'package:semantica/core/markdown/markdown_viewer.dart';
+import 'package:semantica/core/markdown/markdown_editor.dart';
 import 'package:semantica/features/block/domain/entities/block.dart';
 import 'package:semantica/features/block/domain/enums/tag.dart';
 import 'package:semantica/features/block/presentation/cubit/block_cubit.dart';
+import 'package:semantica/features/block/presentation/widgets/custom_expansion_tile.dart';
 import 'package:semantica/features/pages/domain/entities/page.dart' as my_page;
 import 'package:semantica/features/pages/presentation/cubit/page_cubit.dart';
 
@@ -48,7 +46,7 @@ class _BlockWidgetState extends State<BlockWidget> {
           return GestureDetector(
             onTap: () {
               if (state is BlockViewing) {
-                focusNode.requestFocus(); // Alterna para o modo de edição
+                focusNode.requestFocus();
                 blockCubit.enterEditMode();
               }
             },
@@ -56,18 +54,17 @@ class _BlockWidgetState extends State<BlockWidget> {
               focusNode: focusNode,
               child: BlocBuilder<BlockCubit, BlockState>(
                 builder: (context, state) {
-                  /*         if (state is BlockEditing) {
+                  if (state is BlockEditing) {
                     return MarkdownEditor(
-                      initialContent: block.toMarkdown(),
+                      initialContent: widget.block.toMarkdown(),
                       onContentChanged: (newContent) {
-                        blockCubit.saveBlock(newContent);
+                        blockCubit.saveBlock(
+                            newContent); // isso ainda não foi implementado
                       },
                     );
-                  } else {*/
-                  // return MarkdownViewer(markdownContent: block.toMarkdown());
-                  return _buildBlockView(widget.block, widget.depth);
-
-                  // }
+                  } else {
+                    return _buildBlockView(widget.block, widget.depth);
+                  }
                 },
               ),
             ),
@@ -90,7 +87,25 @@ class _BlockWidgetState extends State<BlockWidget> {
       );
     }
 
-    if (block.tag == Tag.ul) {
+    double verticalPadding;
+
+    switch (block.tag) {
+      case Tag.h1:
+      case Tag.h2:
+        verticalPadding = 12.0;
+        break;
+      case Tag.h3:
+      case Tag.h4:
+        verticalPadding = 10.0;
+        break;
+      default:
+        verticalPadding = 8.0;
+    }
+
+    EdgeInsetsGeometry tilePadding =
+        EdgeInsets.symmetric(vertical: verticalPadding);
+
+    if (block.tag.isListItem()) {
       depth++;
     }
 
@@ -98,21 +113,10 @@ class _BlockWidgetState extends State<BlockWidget> {
       data: Theme.of(context).copyWith(
         dividerColor: Colors.transparent,
       ),
-      child: ExpansionTile(
-        tilePadding: EdgeInsets.zero,
+      child: CustomExpansionTile(
+        tilePadding: tilePadding,
         title: _buildHeader(block),
         initiallyExpanded: isExpanded,
-        onExpansionChanged: (expanded) {
-          setState(() {
-            isExpanded = expanded;
-          });
-        },
-        trailing: block.children.isNotEmpty
-            ? Icon(
-                isExpanded ? Icons.expand_more : Icons.chevron_left,
-                color: Theme.of(context).iconTheme.color,
-              )
-            : SizedBox.shrink(),
         children: block.children
             .map((child) => BlockWidget(
                   page: widget.page,
@@ -123,9 +127,9 @@ class _BlockWidgetState extends State<BlockWidget> {
       ),
     );
 
-    if (block.tag == Tag.ul) {
+    if (block.tag.isListItem()) {
       return Padding(
-        padding: EdgeInsets.only(left: depth * 16.0),
+        padding: EdgeInsets.only(left: depth * 8.0),
         child: expansionTile,
       );
     }
@@ -134,20 +138,15 @@ class _BlockWidgetState extends State<BlockWidget> {
   }
 
   Widget _buildHeader(Block block) {
+    if (block.tag.isHeader()) {
+      int? level = block.tag.headerLevel();
+      if (level != null) {
+        return MarkdownViewer(
+            markdownContent: "${'#' * level} ${block.header?.text}");
+      }
+    }
+
     switch (block.tag) {
-      case Tag.h1:
-        return MarkdownViewer(markdownContent: "# ${block.header?.text}");
-      case Tag.h2:
-        return MarkdownViewer(markdownContent: "## ${block.header?.text}");
-      case Tag.h3:
-        return MarkdownViewer(markdownContent: "### ${block.header?.text}");
-      case Tag.h4:
-        return MarkdownViewer(markdownContent: "#### ${block.header?.text}");
-      case Tag.h5:
-        return MarkdownViewer(markdownContent: "##### ${block.header?.text}");
-      case Tag.h6:
-        return MarkdownViewer(markdownContent: "###### ${block.header?.text}");
-      // falta o ol
       case Tag.ul:
         return Row(
           children: [
@@ -156,7 +155,7 @@ class _BlockWidgetState extends State<BlockWidget> {
             SizedBox(width: 8),
             Flexible(
               child: MarkdownViewer(markdownContent: block.header?.text ?? ''),
-            )
+            ),
           ],
         );
       case Tag.p:

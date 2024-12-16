@@ -35,21 +35,17 @@ class PageWidget extends ComponentView {
             return SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: BlockWidget(
-                            block: component.content,
-                            page: component,
-                          ),
-                        ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: BlockWidget(
+                        block: component.content,
+                        page: component,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             );
