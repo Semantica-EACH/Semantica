@@ -39,16 +39,6 @@ class PageWidget extends ComponentView {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          component.title,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
