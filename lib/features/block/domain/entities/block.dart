@@ -22,9 +22,11 @@ class Block {
         children = [] {
     List<Block> parsedBlocks = fromMarkdown(markdown);
     if (parsedBlocks.length > 1) {
-      throw Exception('Mais de uma raiz encontrada no Markdown.');
+      throw Exception('Mais de uma raiz encontrada no Markdown.'); // !bug
     } else if (parsedBlocks.isEmpty) {
-      throw Exception('Nenhuma raiz encontrada no Markdown.');
+      tag = Tag.root;
+      header = null;
+      children = [];
     } else {
       Block root = parsedBlocks.first;
       tag = root.tag;

@@ -7,11 +7,13 @@ import 'package:highlight/languages/markdown.dart';
 class MarkdownEditor extends StatefulWidget {
   final String initialContent;
   final ValueChanged<String> onContentChanged;
+  final FocusNode? focusNode;
 
   const MarkdownEditor({
     super.key,
     required this.initialContent,
     required this.onContentChanged,
+    this.focusNode,
   });
 
   @override
@@ -24,6 +26,18 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
   @override
   void initState() {
     super.initState();
+
+    print(
+        "FocusNode criado: ${widget.focusNode} para widget: ${widget.hashCode}");
+
+    if (widget.focusNode != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && widget.focusNode!.canRequestFocus) {
+          widget.focusNode!.requestFocus();
+        }
+      });
+    }
+
     _codeController = CodeController(
       text: widget.initialContent,
       language: markdown,
@@ -32,12 +46,6 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
     _codeController.addListener(() {
       widget.onContentChanged(_codeController.text);
     });
-  }
-
-  @override
-  void dispose() {
-    _codeController.dispose();
-    super.dispose();
   }
 
   @override
@@ -57,6 +65,8 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
           lineNumbers: false,
           controller: _codeController,
           maxLines: null,
+          focusNode: widget.focusNode,
+          enabled: true,
           onChanged: widget.onContentChanged,
           textStyle: const TextStyle(fontFamily: 'SourceCodePro'),
         ),

@@ -17,6 +17,6 @@ class BlockCubit extends Cubit<BlockState> {
 
   void saveBlock(String newContent) {
     final updatedBlock = Block.fromMarkdown(newContent);
-    emit(BlockViewing(updatedBlock));
+    emit(BlockEditing(updatedBlock));
   }
 }

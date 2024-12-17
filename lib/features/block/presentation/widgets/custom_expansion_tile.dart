@@ -73,16 +73,22 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
   }
 
   Widget _buildChildren(BuildContext context, Widget? child) {
+    final bool hasChildren = widget.children.isNotEmpty;
+
+    EdgeInsetsGeometry padding = widget.tilePadding ?? EdgeInsets.zero;
+    if (!hasChildren) {
+      padding = padding.add(const EdgeInsets.only(left: 24.0));
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
           color: widget.backgroundColor,
-          padding:
-              widget.tilePadding ?? const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: padding,
           child: Row(
             children: [
-              widget.children.isNotEmpty
+              hasChildren
                   ? GestureDetector(
                       onTap: _handleTap,
                       child: RotationTransition(
